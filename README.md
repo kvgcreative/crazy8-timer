@@ -2,6 +2,8 @@
 
 This is a single‑page web app for running a **Crazy 8's** style sketching exercise. It gives you fast, visual feedback and gentle audio prompts so you can stay focused on sketching instead of watching the clock.
 
+Created with AI using Cursor
+
 ### Features
 
 - **Per‑sketch countdown**: A circular visual timer counts down for each sketch.
