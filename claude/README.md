@@ -4,6 +4,8 @@
 
 Crazy 8s is a design sprint exercise where you rapidly sketch **8 different ideas in 8 minutes** — one minute per sketch. The time pressure keeps you from overthinking and forces creative output. This timer is built to run that session automatically, keeping you in the flow.
 
+Created with AI using Claude
+
 ---
 
 ## Getting Started
