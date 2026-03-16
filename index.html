@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crazy 8’s Timer</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app" id="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true"></div>
+          <div class="brand__text">
+            <div class="brand__title">Crazy 8’s</div>
+            <div class="brand__subtitle">Sketch countdown timer</div>
+          </div>
+        </div>
+
+        <div class="topbar__actions">
+          <button class="btn btn--ghost" id="themeToggle" type="button" aria-label="Toggle theme">
+            <span class="btn__icon" aria-hidden="true">◐</span>
+            <span class="btn__label">Theme</span>
+          </button>
+        </div>
+      </header>
+
+      <main class="main">
+        <section class="panel">
+          <div class="panel__row panel__row--split">
+            <div class="metric">
+              <div class="metric__label">Total remaining</div>
+              <div class="metric__value" id="totalRemaining">08:00</div>
+            </div>
+            <div class="metric metric--right">
+              <div class="metric__label">Current sketch</div>
+              <div class="metric__value" id="sketchCounter">1 / 8</div>
+            </div>
+          </div>
+
+          <div class="progress">
+            <div class="progress__track" aria-hidden="true">
+              <div class="progress__fill" id="totalProgressFill"></div>
+            </div>
+            <div class="progress__labels">
+              <div class="progress__label" id="sketchRemainingLabel">Sketch remaining: 01:00</div>
+              <div class="progress__label progress__label--right" id="statusLabel">Ready</div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <button class="btn btn--primary" id="startPauseBtn" type="button">
+              <span class="btn__label" id="startPauseLabel">Start</span>
+            </button>
+            <button class="btn btn--secondary" id="resetBtn" type="button">Reset</button>
+          </div>
+        </section>
+
+        <section class="panel panel--form">
+          <div class="panel__title">Setup</div>
+          <div class="formGrid">
+            <label class="field">
+              <span class="field__label">Sketches</span>
+              <input class="field__input" id="sketchesInput" type="number" min="1" max="99" value="8" />
+              <span class="field__hint">How many sketches total.</span>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Minutes per sketch</span>
+              <input class="field__input" id="minutesPerSketchInput" type="number" min="1" max="60" value="1" />
+              <span class="field__hint">Each sketch duration.</span>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Volume</span>
+              <input class="field__input" id="volumeInput" type="range" min="0" max="1" step="0.01" value="0.75" />
+              <span class="field__hint">Affects both sounds.</span>
+            </label>
+
+            <div class="field">
+              <div class="field__label">Theme</div>
+              <div class="segmented" role="group" aria-label="Theme selection">
+                <button class="segmented__btn" id="themeLightBtn" type="button" data-theme="light">Light</button>
+                <button class="segmented__btn" id="themeDarkBtn" type="button" data-theme="dark">Dark</button>
+              </div>
+              <div class="field__hint">White/charcoal + red accents.</div>
+            </div>
+
+            <label class="field">
+              <span class="field__label">Minute sound (every sketch)</span>
+              <input class="field__input field__input--file" id="minuteSoundInput" type="file" accept="audio/*" />
+              <span class="field__hint">Optional. If empty, a built-in beep plays.</span>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Final sound (end)</span>
+              <input class="field__input field__input--file" id="finalSoundInput" type="file" accept="audio/*" />
+              <span class="field__hint">Optional. If empty, a different built-in beep plays.</span>
+            </label>
+          </div>
+        </section>
+      </main>
+
+      <div class="overlay" id="overlay" role="status" aria-live="assertive" aria-atomic="true" hidden>
+        <div class="overlay__card">
+          <div class="overlay__badge" id="overlayBadge">Next</div>
+          <div class="overlay__title" id="overlayTitle">Move to next sketch!</div>
+          <div class="overlay__subtitle" id="overlaySubtitle">Sketch 2 of 8</div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
