@@ -21,7 +21,7 @@
     --green: #1a7a4a;
     --green-soft: #e8f5ee;
     --shadow: 0 2px 12px rgba(0,0,0,0.07);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
   }
   [data-theme="dark"] {
     --bg: #18171a;
@@ -38,7 +38,7 @@
     --green: #2eb86a;
     --green-soft: #0e2018;
     --shadow: 0 2px 12px rgba(0,0,0,0.3);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+    --shadow-lg: 0 8px 40px rgba(0,0,0,0.55);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -57,18 +57,14 @@
     padding: 2rem 1.5rem 4rem;
   }
 
-  /* HEADER */
+  /* ── HEADER ─────────────────────────────── */
   header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
   }
-  .logo {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-  }
+  .logo { display: flex; align-items: center; gap: 14px; }
   .logo-num {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 3rem;
@@ -77,20 +73,16 @@
     letter-spacing: 2px;
   }
   .logo-text {
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.18em;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--text-muted);
+    line-height: 1;
   }
-  .header-controls {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
+  .header-controls { display: flex; gap: 10px; align-items: center; }
   .icon-btn {
-    width: 38px;
-    height: 38px;
+    width: 46px; height: 46px;
     border-radius: 50%;
     border: 1px solid var(--border);
     background: var(--surface);
@@ -100,45 +92,82 @@
     align-items: center;
     justify-content: center;
     transition: all 0.15s;
-    font-size: 15px;
+    font-size: 20px;
   }
-  .icon-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-soft);
+  .icon-btn:hover  { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .icon-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+  /* ── STATUS BAR ─────────────────────────── */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 1.25rem;
   }
-  .icon-btn.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
+  .status-pill {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+  }
+  .status-pill.idle    { background: var(--surface2); color: var(--text-muted); }
+  .status-pill.running { background: var(--accent-soft); color: var(--accent); }
+  .status-pill.done    { background: var(--green-soft); color: var(--green); }
+  .status-pill.paused  { background: var(--surface2); color: var(--text-muted); }
+  .status-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-hint);
   }
 
-  /* TIMER CARD */
-  .timer-card {
+  /* ── CARD FLIP ──────────────────────────── */
+  .card-scene {
+    perspective: 1400px;
+    margin-bottom: 1.25rem;
+  }
+  .card-flipper {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+    height: 420px; /* initial; overridden by JS */
+  }
+  .card-flipper.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 20px;
-    padding: 2.5rem 2rem;
     box-shadow: var(--shadow);
-    margin-bottom: 1.5rem;
-    position: relative;
     overflow: hidden;
   }
-  .timer-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--accent);
-    transform-origin: left;
-    transition: transform 1s linear;
+  .card-front {
+    padding: 2rem 2rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-back {
+    transform: rotateY(180deg);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
   }
 
+  /* ── SKETCH INFO ─────────────────────────── */
   .sketch-info {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
   .sketch-label {
     font-size: 0.72rem;
@@ -147,72 +176,81 @@
     color: var(--text-hint);
     font-weight: 500;
   }
-  .sketch-counter {
-    display: flex;
-    gap: 6px;
-  }
+  .sketch-counter { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; max-width: 50%; }
   .sketch-dot {
-    width: 8px;
-    height: 8px;
+    width: 8px; height: 8px;
     border-radius: 50%;
     border: 1.5px solid var(--border);
     background: transparent;
     transition: all 0.3s;
   }
-  .sketch-dot.done { background: var(--accent); border-color: var(--accent); }
+  .sketch-dot.done   { background: var(--accent); border-color: var(--accent); }
   .sketch-dot.active { border-color: var(--accent); background: var(--accent-soft); }
 
-  .time-display {
-    text-align: center;
-    margin: 1rem 0 1.5rem;
+  /* ── CIRCULAR TIMER ─────────────────────── */
+  .circle-timer-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    margin: 0.5rem 0 1.5rem;
+  }
+  .circle-timer {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    flex-shrink: 0;
+  }
+  .circle-timer svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .ring-track {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 16;
+  }
+  .ring-bg {
+    fill: none;
+    stroke: var(--surface2);
+    stroke-width: 16;
+  }
+  .ring-progress {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 16;
+    stroke-linecap: butt;
+    transition: stroke-dashoffset 1s linear, stroke 0.3s;
+  }
+  .circle-timer-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .time-big {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 8rem;
+    font-size: 6rem;
     line-height: 1;
     color: var(--text);
     letter-spacing: 4px;
     transition: color 0.3s;
   }
   .time-big.warning { color: var(--accent); }
-  .time-label {
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-hint);
-    font-weight: 500;
-    margin-top: 4px;
-  }
 
-  /* PROGRESS */
-  .overall-progress {
-    margin-bottom: 1.5rem;
-  }
-  .progress-track {
-    height: 4px;
-    background: var(--surface2);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 4px;
-    transition: width 1s linear;
-  }
-
-  /* CONTROLS */
-  .controls {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-  }
+  /* ── CONTROLS ───────────────────────────── */
+  .controls { display: flex; gap: 12px; justify-content: center; }
   .btn {
     font-family: 'DM Sans', sans-serif;
     font-size: 0.85rem;
     font-weight: 500;
     letter-spacing: 0.06em;
-    padding: 0.65rem 1.5rem;
+    padding: 0.65rem 1.4rem;
     border-radius: 100px;
     border: 1px solid var(--border);
     cursor: pointer;
@@ -226,13 +264,78 @@
     color: white;
     border-color: var(--accent);
     font-size: 0.9rem;
-    padding: 0.75rem 2.5rem;
+    padding: 0.75rem 2.2rem;
     font-weight: 600;
   }
   .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn:disabled { opacity: 0.38; cursor: not-allowed; }
 
-  /* SKETCH GRID */
+  /* ── SETTINGS BACK ──────────────────────── */
+  .settings-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-hint);
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+  }
+  .setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .setting-row:last-of-type { border-bottom: none; }
+  .setting-info { flex: 1; }
+  .setting-label { font-size: 0.9rem; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .setting-desc  { font-size: 0.75rem; color: var(--text-muted); }
+  .setting-control { display: flex; align-items: center; gap: 10px; margin-left: 1rem; }
+  .stepper-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-family: 'DM Mono', monospace;
+  }
+  .stepper-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .stepper-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 500;
+    min-width: 28px;
+    text-align: center;
+    color: var(--text);
+  }
+  .settings-apply {
+    margin-top: auto;
+    padding-top: 1.25rem;
+    width: 100%;
+  }
+  .settings-apply button {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--charcoal);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .settings-apply button:hover { opacity: 0.82; }
+
+  /* ── SKETCH GRID ─────────────────────────── */
   .sketch-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -253,137 +356,39 @@
     position: relative;
     overflow: hidden;
   }
-  .sketch-box.active-box {
-    border-color: var(--accent);
-    background: var(--accent-soft);
-  }
-  .sketch-box.done-box {
-    border-color: var(--border);
-    background: var(--surface);
-  }
+  .sketch-box.active-box { border-color: var(--accent); background: var(--accent-soft); }
+  .sketch-box.done-box   { border-color: var(--border); background: var(--surface); }
   .sketch-box-num {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem;
+    font-size: 3.2rem;
     color: var(--text-hint);
     line-height: 1;
     transition: color 0.3s;
   }
   .sketch-box.active-box .sketch-box-num { color: var(--accent); }
-  .sketch-box.done-box .sketch-box-num { color: var(--border); }
+  .sketch-box.done-box   .sketch-box-num { color: var(--border); }
   .sketch-box-label {
-    font-size: 0.6rem;
+    font-size: 1.2rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-hint);
     font-weight: 500;
   }
-  .sketch-box.done-box::after {
-    content: '✓';
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: var(--border);
-    background: transparent;
-  }
-
-  /* SETTINGS PANEL */
-  .settings-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: var(--shadow);
-    margin-bottom: 1.5rem;
+  .sketch-box-check {
     display: none;
+    font-size: 2rem;
+    color: var(--border);
+    margin-top: 16px;
+    line-height: 1;
   }
-  .settings-panel.open { display: block; }
-  .settings-title {
-    font-size: 0.72rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-hint);
-    font-weight: 500;
-    margin-bottom: 1.5rem;
-  }
-  .setting-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .setting-row:last-child { border-bottom: none; }
-  .setting-info { flex: 1; }
-  .setting-label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 2px;
-  }
-  .setting-desc {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-  }
-  .setting-control {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-left: 1rem;
-  }
-  .stepper-btn {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--text);
-    cursor: pointer;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-    font-family: 'DM Mono', monospace;
-  }
-  .stepper-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-soft);
-  }
-  .stepper-val {
-    font-family: 'DM Mono', monospace;
-    font-size: 1.1rem;
-    font-weight: 500;
-    min-width: 28px;
-    text-align: center;
-    color: var(--text);
-  }
-  .settings-apply {
-    margin-top: 1.5rem;
-    width: 100%;
-    padding: 0.75rem;
-    background: var(--charcoal);
-    color: var(--bg);
-    border: none;
-    border-radius: 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
-  .settings-apply:hover { opacity: 0.85; }
+  .sketch-box.done-box .sketch-box-check { display: block; }
 
-  /* NOTIFICATION OVERLAY */
+  /* ── NOTIFICATION OVERLAY ───────────────── */
   .notif-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,0.55);
-    z-index: 100;
+    z-index: 200;
     display: none;
     align-items: center;
     justify-content: center;
@@ -394,26 +399,18 @@
     border-radius: 24px;
     padding: 3rem 3.5rem;
     text-align: center;
-    max-width: 480px;
+    max-width: 440px;
     width: 90%;
     box-shadow: var(--shadow-lg);
     animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  .notif-card.final {
-    border-top: 5px solid var(--green);
-  }
-  .notif-card.move {
-    border-top: 5px solid var(--accent);
-  }
+  .notif-card.final { border-top: 5px solid var(--green); }
+  .notif-card.move  { border-top: 5px solid var(--accent); }
   @keyframes popIn {
     from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+    to   { transform: scale(1);   opacity: 1; }
   }
-  .notif-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    line-height: 1;
-  }
+  .notif-icon { font-size: 3rem; margin-bottom: 1rem; line-height: 1; }
   .notif-headline {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 3.5rem;
@@ -422,12 +419,8 @@
     margin-bottom: 0.5rem;
   }
   .notif-headline.accent { color: var(--accent); }
-  .notif-headline.green { color: var(--green); }
-  .notif-sub {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    letter-spacing: 0.06em;
-  }
+  .notif-headline.green  { color: var(--green); }
+  .notif-sub { font-size: 0.85rem; color: var(--text-muted); letter-spacing: 0.06em; }
   .notif-timer {
     margin-top: 1.5rem;
     font-family: 'DM Mono', monospace;
@@ -437,8 +430,7 @@
   }
   .notif-timer span {
     display: inline-block;
-    width: 60px;
-    height: 3px;
+    width: 60px; height: 3px;
     border-radius: 3px;
     background: var(--border);
     vertical-align: middle;
@@ -455,46 +447,186 @@
   }
   @keyframes shrink { from { width: 100%; } to { width: 0%; } }
 
-  /* STATUS BAR */
-  .status-bar {
+  /* ── ABOUT MODAL ────────────────────────── */
+  .about-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 300;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem 3rem;
+    overflow-y: auto;
+  }
+  .about-overlay.show { display: flex; }
+  .about-modal {
+    background: var(--surface);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.38s cubic-bezier(0.34, 1.3, 0.64, 1);
+    overflow: hidden;
+    margin: auto;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .about-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.75rem 1rem;
+    padding: 1.75rem 2rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    margin-bottom: 1rem;
+    z-index: 1;
   }
-  .status-pill {
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
+  .about-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .about-header p {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+  .about-close {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .about-close:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .about-body { padding: 1.75rem 2rem 2rem; }
+  .about-section { margin-bottom: 1.75rem; }
+  .about-section:last-child { margin-bottom: 0; }
+  .about-tag {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 100px;
+    color: var(--accent);
+    margin-bottom: 0.55rem;
   }
-  .status-pill.idle { background: var(--surface2); color: var(--text-muted); }
-  .status-pill.running { background: var(--accent-soft); color: var(--accent); }
-  .status-pill.done { background: var(--green-soft); color: var(--green); }
-  .status-pill.paused { background: var(--surface2); color: var(--text-muted); }
-  .status-meta {
+  .about-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .about-section p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 0.55rem;
+  }
+  .about-section p:last-child { margin-bottom: 0; }
+  .about-steps {
+    counter-reset: astep;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 0.25rem;
+  }
+  .about-steps li {
+    counter-increment: astep;
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .about-steps li::before {
+    content: counter(astep);
     font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--text-hint);
+    font-size: 0.68rem;
+    font-weight: 500;
+    background: var(--accent);
+    color: white;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
   }
+  .about-tips {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 0.5rem;
+  }
+  .about-tip {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+    border: 1px solid var(--border);
+  }
+  .about-tip strong {
+    display: block;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+    font-size: 0.82rem;
+  }
+  .about-divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+  .about-controls-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 14px;
+    align-items: center;
+  }
+  .ctl-pill {
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 3px 10px;
+    color: var(--text);
+    white-space: nowrap;
+    justify-self: start;
+  }
+  .ctl-pill.red { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .ctl-desc { font-size: 0.83rem; color: var(--text-muted); line-height: 1.5; }
 </style>
 </head>
 <body>
 <div class="app">
+
   <!-- HEADER -->
   <header>
     <div class="logo">
       <div class="logo-num">C8</div>
-      <div class="logo-text">Crazy Eights<br>Timer</div>
+      <div class="logo-text">Crazy Eights Timer</div>
     </div>
     <div class="header-controls">
-      <button class="icon-btn" id="themeBtn" title="Toggle theme" onclick="toggleTheme()">☀</button>
+      <button class="icon-btn" id="aboutBtn"    title="About & Instructions" onclick="toggleAbout()">?</button>
+      <button class="icon-btn" id="themeBtn"    title="Toggle theme" onclick="toggleTheme()">☀</button>
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
     </div>
   </header>
@@ -505,77 +637,91 @@
     <span class="status-meta" id="statusMeta">Ready to sketch</span>
   </div>
 
-  <!-- TIMER CARD -->
-  <div class="timer-card">
-    <div id="progressBar" style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);transform-origin:left;transform:scaleX(0);transition:transform 1s linear;"></div>
-    <div class="sketch-info">
-      <span class="sketch-label">Sketch <span id="sketchCurrent">1</span> of <span id="sketchTotal">8</span></span>
-      <div class="sketch-counter" id="sketchDots"></div>
-    </div>
-    <div class="time-display">
-      <div class="time-big" id="timeBig">1:00</div>
-      <div class="time-label" id="timeLabel">per sketch</div>
-    </div>
-    <div class="overall-progress">
-      <div class="progress-track">
-        <div class="progress-fill" id="overallFill" style="width:0%"></div>
+  <!-- ── FLIP CARD ── -->
+  <div class="card-scene">
+    <div class="card-flipper" id="cardFlipper">
+
+      <!-- FRONT: TIMER -->
+      <div class="card-face card-front" id="cardFront">
+        <div class="sketch-info">
+          <span class="sketch-label">Sketch <span id="sketchCurrent">1</span> of <span id="sketchTotal">8</span></span>
+          <div class="sketch-counter" id="sketchDots"></div>
+        </div>
+
+        <div class="circle-timer-wrap">
+          <div class="circle-timer">
+            <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+              <circle class="ring-bg"       cx="140" cy="140" r="120"/>
+              <circle class="ring-track"    cx="140" cy="140" r="120"/>
+              <circle class="ring-progress" cx="140" cy="140" r="120" id="ringProgress"/>
+            </svg>
+            <div class="circle-timer-inner">
+              <div class="time-big" id="timeBig">1:00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn" id="resetBtn" onclick="resetTimer()" disabled>↺ Reset</button>
+          <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()">▶ Start</button>
+          <button class="btn" id="skipBtn"  onclick="skipSketch()" disabled>Skip →</button>
+        </div>
       </div>
-    </div>
-    <div class="controls">
-      <button class="btn" id="resetBtn" onclick="resetTimer()" disabled>↺ Reset</button>
-      <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()">▶ Start</button>
-      <button class="btn" id="skipBtn" onclick="skipSketch()" disabled>Skip →</button>
+
+      <!-- BACK: SETTINGS -->
+      <div class="card-face card-back" id="cardBack">
+        <div class="settings-title">Timer Settings</div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Number of sketches</div>
+            <div class="setting-desc">Total sketches in the session</div>
+          </div>
+          <div class="setting-control">
+            <button class="stepper-btn" onclick="adjustSetting('sketches',-1)">−</button>
+            <div class="stepper-val" id="settingSketches">8</div>
+            <button class="stepper-btn" onclick="adjustSetting('sketches',1)">+</button>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Minutes per sketch</div>
+            <div class="setting-desc">Duration of each sketch slot</div>
+          </div>
+          <div class="setting-control">
+            <button class="stepper-btn" onclick="adjustSetting('minutes',-1)">−</button>
+            <div class="stepper-val" id="settingMinutes">1</div>
+            <button class="stepper-btn" onclick="adjustSetting('minutes',1)">+</button>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Warning at (seconds left)</div>
+            <div class="setting-desc">When the countdown turns red</div>
+          </div>
+          <div class="setting-control">
+            <button class="stepper-btn" onclick="adjustSetting('warning',-5)">−</button>
+            <div class="stepper-val" id="settingWarning">15</div>
+            <button class="stepper-btn" onclick="adjustSetting('warning',5)">+</button>
+          </div>
+        </div>
+
+        <div class="settings-apply">
+          <button onclick="applySettings()">Apply Settings</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <!-- SKETCH GRID -->
   <div class="sketch-grid" id="sketchGrid"></div>
 
-  <!-- SETTINGS PANEL -->
-  <div class="settings-panel" id="settingsPanel">
-    <div class="settings-title">Timer Settings</div>
-
-    <div class="setting-row">
-      <div class="setting-info">
-        <div class="setting-label">Number of sketches</div>
-        <div class="setting-desc">How many sketches in the session</div>
-      </div>
-      <div class="setting-control">
-        <button class="stepper-btn" onclick="adjustSetting('sketches', -1)">−</button>
-        <div class="stepper-val" id="settingSketches">8</div>
-        <button class="stepper-btn" onclick="adjustSetting('sketches', 1)">+</button>
-      </div>
-    </div>
-
-    <div class="setting-row">
-      <div class="setting-info">
-        <div class="setting-label">Minutes per sketch</div>
-        <div class="setting-desc">Duration of each sketch slot</div>
-      </div>
-      <div class="setting-control">
-        <button class="stepper-btn" onclick="adjustSetting('minutes', -1)">−</button>
-        <div class="stepper-val" id="settingMinutes">1</div>
-        <button class="stepper-btn" onclick="adjustSetting('minutes', 1)">+</button>
-      </div>
-    </div>
-
-    <div class="setting-row">
-      <div class="setting-info">
-        <div class="setting-label">Warning at (seconds left)</div>
-        <div class="setting-desc">When the timer turns red</div>
-      </div>
-      <div class="setting-control">
-        <button class="stepper-btn" onclick="adjustSetting('warning', -5)">−</button>
-        <div class="stepper-val" id="settingWarning">15</div>
-        <button class="stepper-btn" onclick="adjustSetting('warning', 5)">+</button>
-      </div>
-    </div>
-
-    <button class="settings-apply" onclick="applySettings()">Apply Settings</button>
-  </div>
 </div>
 
-<!-- NOTIFICATION OVERLAY -->
+<!-- ── NOTIFICATION OVERLAY ── -->
 <div class="notif-overlay" id="notifOverlay">
   <div class="notif-card" id="notifCard">
     <div class="notif-icon" id="notifIcon">✏️</div>
@@ -585,354 +731,181 @@
   </div>
 </div>
 
-<script>
-// ── STATE ──────────────────────────────────────────────────────────
-let settings = {
-  sketches: 8,
-  minutes: 1,
-  warning: 15
-};
-let tempSettings = { ...settings };
+<!-- ── ABOUT MODAL ── -->
+<div class="about-overlay" id="aboutOverlay" onclick="handleAboutBg(event)">
+  <div class="about-modal">
+    <div class="about-header">
+      <div>
+        <h2>Crazy Eights</h2>
+        <p>How to use the timer and run a team session</p>
+      </div>
+      <button class="about-close" onclick="toggleAbout()">✕</button>
+    </div>
+    <div class="about-body">
 
-let state = 'idle'; // idle | running | paused | done
+      <div class="about-section">
+        <div class="about-tag">What is it?</div>
+        <p>Crazy 8s is a rapid sketching exercise from Google Ventures' Design Sprint. Each person folds a sheet of paper into 8 panels and has one minute to sketch a different idea in each one. The time pressure forces quantity over quality — and that's the whole point.</p>
+        <p>The goal isn't polished drawings. It's to move past your first obvious idea and explore a wider range of possibilities before committing to a direction.</p>
+      </div>
+
+      <div class="about-divider"></div>
+
+      <div class="about-section">
+        <div class="about-tag">Using the timer</div>
+        <div class="about-controls-grid">
+          <span class="ctl-pill red">▶ Start</span>
+          <span class="ctl-desc">Begin the countdown for the first sketch</span>
+          <span class="ctl-pill red">⏸ Pause</span>
+          <span class="ctl-desc">Freeze the timer without losing progress</span>
+          <span class="ctl-pill">↺ Reset</span>
+          <span class="ctl-desc">Cancel the session and return to the beginning</span>
+          <span class="ctl-pill">Skip →</span>
+          <span class="ctl-desc">End the current sketch early and move to the next</span>
+          <span class="ctl-pill">⚙</span>
+          <span class="ctl-desc">Flip the card to adjust number of sketches, time per sketch, and warning threshold — then tap Apply</span>
+          <span class="ctl-pill">? </span>
+          <span class="ctl-desc">Open this guide</span>
+          <span class="ctl-pill">☀ / ☾</span>
+          <span class="ctl-desc">Toggle light and dark mode</span>
+        </div>
+        <p style="margin-top:1rem;">When each minute ends, a <strong>"Move to next sketch!"</strong> overlay appears with an audio alert and auto-closes after 5 seconds. At the end of the full session, a <strong>"Pencils down!"</strong> screen plays a victory chime.</p>
+      </div>
+
+      <div class="about-divider"></div>
+
+      <div class="about-section">
+        <div class="about-tag">Facilitating a team session</div>
+        <h3>Before you start</h3>
+        <ol class="about-steps">
+          <li>Give everyone a sheet of paper and have them fold it in half three times to create 8 equal panels.</li>
+          <li>Define the challenge clearly — everyone should be sketching toward the same problem.</li>
+          <li>Remind the team these are quick sketches, not wireframes. Stick figures and rough boxes are perfect.</li>
+          <li>Open this timer on a shared screen, or have each person run it on their own device.</li>
+        </ol>
+      </div>
+
+      <div class="about-section">
+        <h3>During the session</h3>
+        <ol class="about-steps">
+          <li>Press <strong>Start</strong> — everyone sketches simultaneously, one idea per panel.</li>
+          <li>When the alert sounds, everyone moves to the next panel immediately.</li>
+          <li>Discourage talking during the exercise — stay heads-down until "Pencils down!" plays.</li>
+          <li>Encourage participants to number each panel as they go to keep track.</li>
+        </ol>
+      </div>
+
+      <div class="about-section">
+        <h3>After the session</h3>
+        <ol class="about-steps">
+          <li>Each person picks their single strongest idea and puts a star on it.</li>
+          <li>Go around the room — each person presents their starred sketch in 60 seconds or less.</li>
+          <li>Use dot voting or a heat map to identify which ideas the team finds most promising.</li>
+          <li>Take the top 1–3 concepts forward into more detailed prototyping or decision-making.</li>
+        </ol>
+      </div>
+
+      <div class="about-divider"></div>
+
+      <div class="about-section">
+        <div class="about-tag">Tips for great sessions</div>
+        <div class="about-tips">
+          <div class="about-tip"><strong>Silence is golden</strong>No talking during sketching — conversation kills flow and slows everyone down.</div>
+          <div class="about-tip"><strong>Quantity over quality</strong>8 rough ideas beats 2 polished ones. Ugly sketches are encouraged.</div>
+          <div class="about-tip"><strong>Label everything</strong>A quick title or caption makes sketches far easier to present afterward.</div>
+          <div class="about-tip"><strong>Vary the time</strong>Try 2-min slots for complex problems, 30-sec for pure ideation speed runs.</div>
+          <div class="about-tip"><strong>Remote teams</strong>Use a shared Miro or FigJam board — upload phone photos right after.</div>
+          <div class="about-tip"><strong>Warm up first</strong>A 5-minute "draw anything" exercise reduces self-consciousness before you begin.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── RING MATH ──────────────────────────────────────────────────────
+const R = 120;
+const CIRC = +(2 * Math.PI * R).toFixed(2); // 753.98
+
+// ── STATE ──────────────────────────────────────────────────────────
+let settings     = { sketches: 8, minutes: 1, warning: 15 };
+let tempSettings = { ...settings };
+let state         = 'idle';
 let currentSketch = 1;
-let secondsLeft = 0;
-let totalSeconds = 0;
-let interval = null;
-let notifTimeout = null;
-let audioCtx = null;
+let secondsLeft   = 0;
+let totalSeconds  = 0;
+let interval      = null;
+let notifTimeout  = null;
+let audioCtx      = null;
+let isFlipped     = false;
 
 // ── AUDIO ──────────────────────────────────────────────────────────
 function getAudioCtx() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   return audioCtx;
 }
-
 function playBeep(type) {
   try {
     const ctx = getAudioCtx();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
     if (type === 'move') {
-      // Two-tone alert
+      const osc = ctx.createOscillator(), g = ctx.createGain();
+      osc.connect(g); g.connect(ctx.destination);
       osc.type = 'sine';
       osc.frequency.setValueAtTime(880, ctx.currentTime);
       osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.12);
-      gain.gain.setValueAtTime(0.35, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.45);
+      g.gain.setValueAtTime(0.35, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.45);
     } else if (type === 'final') {
-      // Victory chime — 4 ascending tones
-      const notes = [523, 659, 784, 1047];
-      notes.forEach((freq, i) => {
-        const o2 = ctx.createOscillator();
-        const g2 = ctx.createGain();
-        o2.connect(g2);
-        g2.connect(ctx.destination);
-        o2.type = 'sine';
-        o2.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.18);
-        g2.gain.setValueAtTime(0, ctx.currentTime + i * 0.18);
-        g2.gain.linearRampToValueAtTime(0.3, ctx.currentTime + i * 0.18 + 0.04);
-        g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.18 + 0.5);
-        o2.start(ctx.currentTime + i * 0.18);
-        o2.stop(ctx.currentTime + i * 0.18 + 0.55);
+      [523, 659, 784, 1047].forEach((freq, i) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.type = 'sine';
+        o.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.18);
+        g.gain.setValueAtTime(0, ctx.currentTime + i * 0.18);
+        g.gain.linearRampToValueAtTime(0.3, ctx.currentTime + i * 0.18 + 0.04);
+        g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.18 + 0.5);
+        o.start(ctx.currentTime + i * 0.18); o.stop(ctx.currentTime + i * 0.18 + 0.55);
       });
     } else if (type === 'tick') {
+      const osc = ctx.createOscillator(), g = ctx.createGain();
+      osc.connect(g); g.connect(ctx.destination);
       osc.type = 'sine';
       osc.frequency.setValueAtTime(660, ctx.currentTime);
-      gain.gain.setValueAtTime(0.12, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + 0.08);
+      g.gain.setValueAtTime(0.12, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.08);
     }
   } catch(e) {}
 }
 
-// ── RENDER ─────────────────────────────────────────────────────────
-function buildDots() {
-  const el = document.getElementById('sketchDots');
-  el.innerHTML = '';
-  for (let i = 1; i <= settings.sketches; i++) {
-    const d = document.createElement('div');
-    d.className = 'sketch-dot' + (i < currentSketch ? ' done' : i === currentSketch ? ' active' : '');
-    el.appendChild(d);
-  }
+// ── CARD FLIP ──────────────────────────────────────────────────────
+function syncCardHeight() {
+  const flipper = document.getElementById('cardFlipper');
+  const front   = document.getElementById('cardFront');
+  const back    = document.getElementById('cardBack');
+  // temporarily un-absolute the back to measure its height
+  back.style.position = 'relative';
+  back.style.transform = 'none';
+  back.style.visibility = 'hidden';
+  const bh = back.scrollHeight;
+  back.style.position   = '';
+  back.style.transform  = '';
+  back.style.visibility = '';
+  const fh = front.scrollHeight;
+  flipper.style.height = Math.max(fh, bh) + 'px';
 }
 
-function buildGrid() {
-  const el = document.getElementById('sketchGrid');
-  el.innerHTML = '';
-  // Max 8 visible, adapt columns
-  const n = settings.sketches;
-  const cols = n <= 4 ? n : Math.ceil(n / 2);
-  el.style.gridTemplateColumns = `repeat(${Math.min(cols, 4)}, 1fr)`;
-  for (let i = 1; i <= n; i++) {
-    const box = document.createElement('div');
-    box.id = `sbox-${i}`;
-    box.className = 'sketch-box' + (i === currentSketch ? ' active-box' : '');
-    box.innerHTML = `<div class="sketch-box-num">${i}</div><div class="sketch-box-label">Sketch</div>`;
-    el.appendChild(box);
-  }
-}
-
-function updateGrid() {
-  for (let i = 1; i <= settings.sketches; i++) {
-    const box = document.getElementById(`sbox-${i}`);
-    if (!box) continue;
-    box.className = 'sketch-box' + (i < currentSketch ? ' done-box' : i === currentSketch ? ' active-box' : '');
-  }
-}
-
-function updateDisplay() {
-  const mins = Math.floor(secondsLeft / 60);
-  const secs = secondsLeft % 60;
-  const display = `${mins}:${secs.toString().padStart(2, '0')}`;
-  const bigEl = document.getElementById('timeBig');
-  bigEl.textContent = display;
-  bigEl.className = 'time-big' + (secondsLeft <= settings.warning && state === 'running' ? ' warning' : '');
-
-  // Progress bar in card (fills across sketch duration)
-  const elapsed = totalSeconds - secondsLeft;
-  const pct = totalSeconds > 0 ? (elapsed / totalSeconds) * 100 : 0;
-  document.getElementById('progressBar').style.transform = `scaleX(${pct / 100})`;
-
-  // Overall progress
-  const sketchSecs = settings.minutes * 60;
-  const totalSessSeconds = settings.sketches * sketchSecs;
-  const doneSketchSecs = (currentSketch - 1) * sketchSecs;
-  const currentSpent = sketchSecs - secondsLeft;
-  const overallPct = ((doneSketchSecs + currentSpent) / totalSessSeconds) * 100;
-  document.getElementById('overallFill').style.width = Math.min(overallPct, 100) + '%';
-
-  document.getElementById('sketchCurrent').textContent = currentSketch;
-  document.getElementById('sketchTotal').textContent = settings.sketches;
-  buildDots();
-  updateGrid();
-}
-
-function updateStatus(s, meta) {
-  const pill = document.getElementById('statusPill');
-  pill.className = 'status-pill ' + s;
-  pill.textContent = s.charAt(0).toUpperCase() + s.slice(1);
-  document.getElementById('statusMeta').textContent = meta;
-}
-
-// ── TIMER LOGIC ────────────────────────────────────────────────────
-function resetTimer() {
-  clearInterval(interval);
-  interval = null;
-  state = 'idle';
-  currentSketch = 1;
-  secondsLeft = settings.minutes * 60;
-  totalSeconds = settings.minutes * 60;
-  updateDisplay();
-  updateStatus('idle', 'Ready to sketch');
-  document.getElementById('startBtn').textContent = '▶ Start';
-  document.getElementById('resetBtn').disabled = true;
-  document.getElementById('skipBtn').disabled = true;
-  document.getElementById('timeLabel').textContent = 'per sketch';
-  document.getElementById('progressBar').style.transform = 'scaleX(0)';
-  document.getElementById('overallFill').style.width = '0%';
-}
-
-function toggleTimer() {
-  if (state === 'idle' || state === 'paused') {
-    startTimer();
-  } else if (state === 'running') {
-    pauseTimer();
-  }
-}
-
-function startTimer() {
-  state = 'running';
-  if (secondsLeft === 0 || secondsLeft === settings.minutes * 60 && currentSketch === 1) {
-    secondsLeft = settings.minutes * 60;
-    totalSeconds = settings.minutes * 60;
-  }
-  document.getElementById('startBtn').textContent = '⏸ Pause';
-  document.getElementById('resetBtn').disabled = false;
-  document.getElementById('skipBtn').disabled = false;
-  document.getElementById('timeLabel').textContent = `sketch ${currentSketch} of ${settings.sketches}`;
-  updateStatus('running', `Sketching — ${settings.sketches * settings.minutes} min session`);
-
-  interval = setInterval(() => {
-    if (state !== 'running') return;
-    secondsLeft--;
-
-    if (secondsLeft <= 10 && secondsLeft > 0) playBeep('tick');
-
-    updateDisplay();
-
-    if (secondsLeft <= 0) {
-      clearInterval(interval);
-      interval = null;
-
-      if (currentSketch >= settings.sketches) {
-        // FINAL
-        state = 'done';
-        playBeep('final');
-        showNotif('final');
-        updateStatus('done', 'Session complete! 🎉');
-        document.getElementById('startBtn').textContent = '▶ Start';
-        document.getElementById('startBtn').disabled = true;
-        document.getElementById('skipBtn').disabled = true;
-        document.getElementById('timeLabel').textContent = 'session complete!';
-        updateGrid();
-        // Mark last as done
-        currentSketch++;
-        buildDots();
-        const lastBox = document.getElementById(`sbox-${settings.sketches}`);
-        if (lastBox) lastBox.className = 'sketch-box done-box';
-      } else {
-        // NEXT SKETCH
-        playBeep('move');
-        showNotif('move');
-        currentSketch++;
-        secondsLeft = settings.minutes * 60;
-        totalSeconds = settings.minutes * 60;
-        document.getElementById('timeLabel').textContent = `sketch ${currentSketch} of ${settings.sketches}`;
-        updateDisplay();
-        // resume after notif
-        setTimeout(() => {
-          if (state === 'running') {
-            interval = setInterval(() => {
-              if (state !== 'running') return;
-              secondsLeft--;
-              if (secondsLeft <= 10 && secondsLeft > 0) playBeep('tick');
-              updateDisplay();
-              if (secondsLeft <= 0) {
-                clearInterval(interval);
-                advanceSketch();
-              }
-            }, 1000);
-          }
-        }, 5200);
-      }
-    }
-  }, 1000);
-}
-
-function advanceSketch() {
-  clearInterval(interval);
-  interval = null;
-  if (currentSketch >= settings.sketches) {
-    state = 'done';
-    playBeep('final');
-    showNotif('final');
-    updateStatus('done', 'Session complete! 🎉');
-    document.getElementById('startBtn').textContent = '▶ Start';
-    document.getElementById('startBtn').disabled = true;
-    document.getElementById('skipBtn').disabled = true;
-    document.getElementById('timeLabel').textContent = 'session complete!';
-    currentSketch++;
-    buildDots();
-    updateGrid();
-  } else {
-    playBeep('move');
-    showNotif('move');
-    currentSketch++;
-    secondsLeft = settings.minutes * 60;
-    totalSeconds = settings.minutes * 60;
-    document.getElementById('timeLabel').textContent = `sketch ${currentSketch} of ${settings.sketches}`;
-    updateDisplay();
-    setTimeout(() => {
-      if (state === 'running') startTimer();
-    }, 5200);
-  }
-}
-
-function pauseTimer() {
-  state = 'paused';
-  clearInterval(interval);
-  interval = null;
-  document.getElementById('startBtn').textContent = '▶ Resume';
-  updateStatus('paused', 'Paused');
-}
-
-function skipSketch() {
-  if (state !== 'running' && state !== 'paused') return;
-  clearInterval(interval);
-  interval = null;
-  if (currentSketch >= settings.sketches) {
-    state = 'done';
-    playBeep('final');
-    showNotif('final');
-    updateStatus('done', 'Session complete! 🎉');
-    document.getElementById('startBtn').textContent = '▶ Start';
-    document.getElementById('startBtn').disabled = true;
-    document.getElementById('skipBtn').disabled = true;
-    currentSketch++;
-    buildDots();
-    updateGrid();
-  } else {
-    playBeep('move');
-    showNotif('move');
-    currentSketch++;
-    secondsLeft = settings.minutes * 60;
-    totalSeconds = settings.minutes * 60;
-    document.getElementById('timeLabel').textContent = `sketch ${currentSketch} of ${settings.sketches}`;
-    updateDisplay();
-    if (state === 'running') {
-      setTimeout(() => { if (state === 'running') startTimer(); }, 5200);
-    }
-  }
-}
-
-// ── NOTIFICATIONS ──────────────────────────────────────────────────
-function showNotif(type) {
-  const overlay = document.getElementById('notifOverlay');
-  const card = document.getElementById('notifCard');
-  const icon = document.getElementById('notifIcon');
-  const headline = document.getElementById('notifHeadline');
-  const sub = document.getElementById('notifSub');
-  const bar = document.getElementById('notifTimerBar');
-
-  if (type === 'move') {
-    card.className = 'notif-card move';
-    icon.textContent = '✏️';
-    headline.className = 'notif-headline accent';
-    headline.innerHTML = 'Move to next<br>sketch!';
-    sub.textContent = `Sketch ${currentSketch + 1} of ${settings.sketches} — keep the ideas flowing`;
-    bar.style.display = '';
-    // Rebuild bar animation
-    bar.innerHTML = 'Auto-closing <span></span>';
-  } else {
-    card.className = 'notif-card final';
-    icon.textContent = '🎨';
-    headline.className = 'notif-headline green';
-    headline.innerHTML = 'Pencils<br>down!';
-    sub.textContent = `You completed all ${settings.sketches} sketches — great work!`;
-    bar.style.display = 'none';
-  }
-
-  overlay.classList.add('show');
-  clearTimeout(notifTimeout);
-
-  if (type === 'move') {
-    notifTimeout = setTimeout(() => {
-      overlay.classList.remove('show');
-    }, 5000);
-  }
-
-  overlay.onclick = (e) => {
-    if (e.target === overlay) overlay.classList.remove('show');
-  };
-}
-
-// ── SETTINGS ───────────────────────────────────────────────────────
 function toggleSettings() {
-  const panel = document.getElementById('settingsPanel');
-  const btn = document.getElementById('settingsBtn');
-  panel.classList.toggle('open');
-  btn.classList.toggle('active');
-  // sync display
-  document.getElementById('settingSketches').textContent = tempSettings.sketches;
-  document.getElementById('settingMinutes').textContent = tempSettings.minutes;
-  document.getElementById('settingWarning').textContent = tempSettings.warning;
+  isFlipped = !isFlipped;
+  document.getElementById('cardFlipper').classList.toggle('flipped', isFlipped);
+  document.getElementById('settingsBtn').classList.toggle('active', isFlipped);
+  if (isFlipped) {
+    document.getElementById('settingSketches').textContent = tempSettings.sketches;
+    document.getElementById('settingMinutes').textContent  = tempSettings.minutes;
+    document.getElementById('settingWarning').textContent  = tempSettings.warning;
+  }
 }
 
 function adjustSetting(key, delta) {
@@ -952,8 +925,195 @@ function applySettings() {
   settings = { ...tempSettings };
   resetTimer();
   buildGrid();
-  document.getElementById('settingsPanel').classList.remove('open');
+  isFlipped = false;
+  document.getElementById('cardFlipper').classList.remove('flipped');
   document.getElementById('settingsBtn').classList.remove('active');
+  setTimeout(syncCardHeight, 50);
+}
+
+// ── ABOUT ──────────────────────────────────────────────────────────
+function toggleAbout() {
+  const overlay = document.getElementById('aboutOverlay');
+  const btn     = document.getElementById('aboutBtn');
+  const open    = overlay.classList.toggle('show');
+  btn.classList.toggle('active', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+function handleAboutBg(e) {
+  if (e.target === document.getElementById('aboutOverlay')) toggleAbout();
+}
+
+// ── BUILD / UPDATE UI ──────────────────────────────────────────────
+function buildDots() {
+  const el = document.getElementById('sketchDots');
+  el.innerHTML = '';
+  for (let i = 1; i <= settings.sketches; i++) {
+    const d = document.createElement('div');
+    d.className = 'sketch-dot' + (i < currentSketch ? ' done' : i === currentSketch ? ' active' : '');
+    el.appendChild(d);
+  }
+}
+
+function buildGrid() {
+  const el = document.getElementById('sketchGrid');
+  el.innerHTML = '';
+  const n    = settings.sketches;
+  const cols = n <= 4 ? n : Math.min(4, Math.ceil(n / 2));
+  el.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  for (let i = 1; i <= n; i++) {
+    const box = document.createElement('div');
+    box.id = `sbox-${i}`;
+    box.className = 'sketch-box' + (i === currentSketch ? ' active-box' : '');
+    box.innerHTML = `<div class="sketch-box-num">${i}</div><div class="sketch-box-label">Sketch</div><div class="sketch-box-check">✓</div>`;
+    el.appendChild(box);
+  }
+}
+
+function updateGrid() {
+  for (let i = 1; i <= settings.sketches; i++) {
+    const box = document.getElementById(`sbox-${i}`);
+    if (!box) continue;
+    box.className = 'sketch-box' + (i < currentSketch ? ' done-box' : i === currentSketch ? ' active-box' : '');
+  }
+}
+
+function updateRing() {
+  const ring = document.getElementById('ringProgress');
+  const pct  = totalSeconds > 0 ? secondsLeft / totalSeconds : 1;
+  ring.style.strokeDashoffset = (CIRC * (1 - pct)).toFixed(2);
+  const warn = secondsLeft <= settings.warning && state === 'running';
+  ring.style.stroke = warn ? 'var(--accent)' : 'var(--accent)';
+  // pulse ring red on warning
+  ring.style.filter = warn ? 'drop-shadow(0 0 6px var(--accent))' : 'none';
+}
+
+function updateDisplay() {
+  const mins = Math.floor(secondsLeft / 60);
+  const secs = secondsLeft % 60;
+  const bigEl = document.getElementById('timeBig');
+  bigEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+  bigEl.className   = 'time-big' + (secondsLeft <= settings.warning && state === 'running' ? ' warning' : '');
+  updateRing();
+  document.getElementById('sketchCurrent').textContent = currentSketch;
+  document.getElementById('sketchTotal').textContent   = settings.sketches;
+  buildDots();
+  updateGrid();
+}
+
+function updateStatus(s, meta) {
+  const pill = document.getElementById('statusPill');
+  pill.className    = 'status-pill ' + s;
+  pill.textContent  = s.charAt(0).toUpperCase() + s.slice(1);
+  document.getElementById('statusMeta').textContent = meta;
+}
+
+// ── NOTIFICATIONS ──────────────────────────────────────────────────
+function showNotif(type) {
+  const overlay  = document.getElementById('notifOverlay');
+  const card     = document.getElementById('notifCard');
+  const headline = document.getElementById('notifHeadline');
+  const sub      = document.getElementById('notifSub');
+  const bar      = document.getElementById('notifTimerBar');
+  document.getElementById('notifIcon').textContent = type === 'move' ? '✏️' : '🎨';
+  if (type === 'move') {
+    card.className     = 'notif-card move';
+    headline.className = 'notif-headline accent';
+    headline.innerHTML = 'Move to next<br>sketch!';
+    sub.textContent    = `Sketch ${currentSketch + 1} of ${settings.sketches} — keep the ideas flowing`;
+    bar.style.display  = '';
+    bar.innerHTML      = 'Auto-closing <span></span>';
+  } else {
+    card.className     = 'notif-card final';
+    headline.className = 'notif-headline green';
+    headline.innerHTML = 'Pencils<br>down!';
+    sub.textContent    = `You completed all ${settings.sketches} sketches — great work!`;
+    bar.style.display  = 'none';
+  }
+  overlay.classList.add('show');
+  clearTimeout(notifTimeout);
+  if (type === 'move') notifTimeout = setTimeout(() => overlay.classList.remove('show'), 5000);
+  overlay.onclick = e => { if (e.target === overlay) overlay.classList.remove('show'); };
+}
+
+// ── TIMER LOGIC ────────────────────────────────────────────────────
+function resetTimer() {
+  clearInterval(interval); interval = null;
+  state         = 'idle';
+  currentSketch = 1;
+  secondsLeft   = settings.minutes * 60;
+  totalSeconds  = settings.minutes * 60;
+  updateDisplay();
+  updateStatus('idle', 'Ready to sketch');
+  document.getElementById('startBtn').textContent  = '▶ Start';
+  document.getElementById('startBtn').disabled     = false;
+  document.getElementById('resetBtn').disabled     = true;
+  document.getElementById('skipBtn').disabled      = true;
+  const ring = document.getElementById('ringProgress');
+  ring.style.strokeDashoffset = '0';
+  ring.style.filter = 'none';
+}
+
+function toggleTimer() {
+  if (state === 'idle' || state === 'paused') startTimer();
+  else if (state === 'running') pauseTimer();
+}
+
+function startTimer() {
+  state        = 'running';
+  secondsLeft  = secondsLeft  || settings.minutes * 60;
+  totalSeconds = totalSeconds || settings.minutes * 60;
+  document.getElementById('startBtn').textContent  = '⏸ Pause';
+  document.getElementById('resetBtn').disabled     = false;
+  document.getElementById('skipBtn').disabled      = false;
+  updateStatus('running', `Sketching — ${settings.sketches * settings.minutes} min session`);
+  interval = setInterval(tick, 1000);
+}
+
+function tick() {
+  if (state !== 'running') return;
+  secondsLeft--;
+  if (secondsLeft <= 10 && secondsLeft > 0) playBeep('tick');
+  updateDisplay();
+  if (secondsLeft <= 0) {
+    clearInterval(interval); interval = null;
+    advanceSketch();
+  }
+}
+
+function advanceSketch() {
+  if (currentSketch >= settings.sketches) {
+    state = 'done';
+    playBeep('final');
+    showNotif('final');
+    updateStatus('done', 'Session complete! 🎉');
+    document.getElementById('startBtn').textContent  = '▶ Start';
+    document.getElementById('startBtn').disabled     = true;
+    document.getElementById('skipBtn').disabled      = true;
+    currentSketch++;
+    buildDots();
+    updateGrid();
+  } else {
+    playBeep('move');
+    showNotif('move');
+    currentSketch++;
+    secondsLeft  = settings.minutes * 60;
+    totalSeconds = settings.minutes * 60;
+    updateDisplay();
+    setTimeout(() => { if (state === 'running') interval = setInterval(tick, 1000); }, 5200);
+  }
+}
+
+function pauseTimer() {
+  state = 'paused';
+  clearInterval(interval); interval = null;
+  document.getElementById('startBtn').textContent = '▶ Resume';
+  updateStatus('paused', 'Paused');
+}
+
+function skipSketch() {
+  if (state !== 'running' && state !== 'paused') return;
+  clearInterval(interval); interval = null;
+  advanceSketch();
 }
 
 // ── THEME ──────────────────────────────────────────────────────────
@@ -966,13 +1126,18 @@ function toggleTheme() {
 
 // ── INIT ───────────────────────────────────────────────────────────
 function init() {
-  tempSettings = { ...settings };
-  secondsLeft = settings.minutes * 60;
-  totalSeconds = settings.minutes * 60;
+  const ring = document.getElementById('ringProgress');
+  ring.style.strokeDasharray  = CIRC;
+  ring.style.strokeDashoffset = '0';
+  tempSettings  = { ...settings };
+  secondsLeft   = settings.minutes * 60;
+  totalSeconds  = settings.minutes * 60;
   buildGrid();
   buildDots();
   updateDisplay();
   updateStatus('idle', 'Ready to sketch');
+  setTimeout(syncCardHeight, 120);
+  window.addEventListener('resize', syncCardHeight);
 }
 
 init();
