@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Crazy 8s Timer</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 <style>
   :root {
     --bg: #f5f4f0;
@@ -94,6 +95,7 @@
     transition: all 0.15s;
     font-size: 20px;
   }
+  .icon-btn .material-icons-round { font-size: 22px; line-height: 1; }
   .icon-btn:hover  { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
   .icon-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
 
@@ -257,7 +259,11 @@
     transition: all 0.15s;
     background: var(--surface);
     color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
+  .btn-icon { font-size: 18px !important; line-height: 1; }
   .btn:hover { border-color: var(--text-muted); }
   .btn-primary {
     background: var(--accent);
@@ -376,7 +382,7 @@
   }
   .sketch-box-check {
     display: none;
-    font-size: 2rem;
+    font-size: 2rem !important;
     color: var(--border);
     margin-top: 16px;
     line-height: 1;
@@ -625,9 +631,9 @@
       <div class="logo-text">Crazy Eights Timer</div>
     </div>
     <div class="header-controls">
-      <button class="icon-btn" id="aboutBtn"    title="About & Instructions" onclick="toggleAbout()">?</button>
-      <button class="icon-btn" id="themeBtn"    title="Toggle theme" onclick="toggleTheme()">☀</button>
-      <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()">⚙</button>
+      <button class="icon-btn" id="aboutBtn"    title="About & Instructions" onclick="toggleAbout()"><span class="material-icons-round">info_outline</span></button>
+      <button class="icon-btn" id="themeBtn"    title="Toggle theme" onclick="toggleTheme()"><span class="material-icons-round" id="themeIcon">light_mode</span></button>
+      <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()"><span class="material-icons-round">settings</span></button>
     </div>
   </header>
 
@@ -662,9 +668,9 @@
         </div>
 
         <div class="controls">
-          <button class="btn" id="resetBtn" onclick="resetTimer()" disabled>↺ Reset</button>
-          <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()">▶ Start</button>
-          <button class="btn" id="skipBtn"  onclick="skipSketch()" disabled>Skip →</button>
+          <button class="btn" id="resetBtn" onclick="resetTimer()" disabled><span class="material-icons-round btn-icon">replay</span> Reset</button>
+          <button class="btn btn-primary" id="startBtn" onclick="toggleTimer()"><span class="material-icons-round btn-icon" id="startIcon">play_arrow</span> <span id="startLabel">Start</span></button>
+          <button class="btn" id="skipBtn"  onclick="skipSketch()" disabled>Skip <span class="material-icons-round btn-icon">skip_next</span></button>
         </div>
       </div>
 
@@ -843,6 +849,7 @@ let isFlipped     = false;
 // ── AUDIO ──────────────────────────────────────────────────────────
 function getAudioCtx() {
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
   return audioCtx;
 }
 function playBeep(type) {
@@ -880,6 +887,21 @@ function playBeep(type) {
   } catch(e) {}
 }
 
+// ── START BUTTON HELPER ────────────────────────────────────────────
+function setStartBtn(icon, label, disabled) {
+  document.getElementById('startIcon').textContent = icon;
+  document.getElementById('startLabel').textContent = label;
+  document.getElementById('startBtn').disabled = !!disabled;
+}
+
+// ── AUDIO UNLOCK (mobile requires user-gesture resume) ─────────────
+function unlockAudio() {
+  if (!audioCtx) return;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+document.addEventListener('touchstart', unlockAudio, { once: false, passive: true });
+document.addEventListener('touchend',   unlockAudio, { once: false, passive: true });
+document.addEventListener('click',      unlockAudio, { once: false, passive: true });
 // ── CARD FLIP ──────────────────────────────────────────────────────
 function syncCardHeight() {
   const flipper = document.getElementById('cardFlipper');
@@ -964,7 +986,7 @@ function buildGrid() {
     const box = document.createElement('div');
     box.id = `sbox-${i}`;
     box.className = 'sketch-box' + (i === currentSketch ? ' active-box' : '');
-    box.innerHTML = `<div class="sketch-box-num">${i}</div><div class="sketch-box-label">Sketch</div><div class="sketch-box-check">✓</div>`;
+    box.innerHTML = `<div class="sketch-box-num">${i}</div><span class="material-icons-round sketch-box-check">check</span>`;
     el.appendChild(box);
   }
 }
@@ -1044,8 +1066,7 @@ function resetTimer() {
   totalSeconds  = settings.minutes * 60;
   updateDisplay();
   updateStatus('idle', 'Ready to sketch');
-  document.getElementById('startBtn').textContent  = '▶ Start';
-  document.getElementById('startBtn').disabled     = false;
+  setStartBtn('play_arrow', 'Start', false);
   document.getElementById('resetBtn').disabled     = true;
   document.getElementById('skipBtn').disabled      = true;
   const ring = document.getElementById('ringProgress');
@@ -1062,7 +1083,10 @@ function startTimer() {
   state        = 'running';
   secondsLeft  = secondsLeft  || settings.minutes * 60;
   totalSeconds = totalSeconds || settings.minutes * 60;
-  document.getElementById('startBtn').textContent  = '⏸ Pause';
+  // Create and resume AudioContext on first user gesture (required on mobile)
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  setStartBtn('pause', 'Pause', false);
   document.getElementById('resetBtn').disabled     = false;
   document.getElementById('skipBtn').disabled      = false;
   updateStatus('running', `Sketching — ${settings.sketches * settings.minutes} min session`);
@@ -1086,8 +1110,7 @@ function advanceSketch() {
     playBeep('final');
     showNotif('final');
     updateStatus('done', 'Session complete! 🎉');
-    document.getElementById('startBtn').textContent  = '▶ Start';
-    document.getElementById('startBtn').disabled     = true;
+    setStartBtn('play_arrow', 'Start', true);
     document.getElementById('skipBtn').disabled      = true;
     currentSketch++;
     buildDots();
@@ -1106,7 +1129,7 @@ function advanceSketch() {
 function pauseTimer() {
   state = 'paused';
   clearInterval(interval); interval = null;
-  document.getElementById('startBtn').textContent = '▶ Resume';
+  setStartBtn('play_arrow', 'Resume', false);
   updateStatus('paused', 'Paused');
 }
 
@@ -1121,7 +1144,7 @@ let isDark = false;
 function toggleTheme() {
   isDark = !isDark;
   document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-  document.getElementById('themeBtn').textContent = isDark ? '☾' : '☀';
+  document.getElementById('themeIcon').textContent = isDark ? 'dark_mode' : 'light_mode';
 }
 
 // ── INIT ───────────────────────────────────────────────────────────
