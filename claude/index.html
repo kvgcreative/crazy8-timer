@@ -603,7 +603,7 @@
   .about-controls-grid {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 8px 14px;
+    gap: 10px 14px;
     align-items: center;
   }
   .ctl-pill {
@@ -612,11 +612,15 @@
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 100px;
-    padding: 3px 10px;
+    padding: 5px 12px;
     color: var(--text);
     white-space: nowrap;
     justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
   }
+  .ctl-pill .material-icons-round { font-size: 16px; line-height: 1; }
   .ctl-pill.red { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
   .ctl-desc { font-size: 0.83rem; color: var(--text-muted); line-height: 1.5; }
 </style>
@@ -745,7 +749,7 @@
         <h2>Crazy Eights</h2>
         <p>How to use the timer and run a team session</p>
       </div>
-      <button class="about-close" onclick="toggleAbout()">✕</button>
+      <button class="about-close" onclick="toggleAbout()"><span class="material-icons-round" style="font-size:18px;">close</span></button>
     </div>
     <div class="about-body">
 
@@ -760,19 +764,19 @@
       <div class="about-section">
         <div class="about-tag">Using the timer</div>
         <div class="about-controls-grid">
-          <span class="ctl-pill red">▶ Start</span>
+          <span class="ctl-pill red"><span class="material-icons-round">play_arrow</span> Start</span>
           <span class="ctl-desc">Begin the countdown for the first sketch</span>
-          <span class="ctl-pill red">⏸ Pause</span>
+          <span class="ctl-pill red"><span class="material-icons-round">pause</span> Pause</span>
           <span class="ctl-desc">Freeze the timer without losing progress</span>
-          <span class="ctl-pill">↺ Reset</span>
+          <span class="ctl-pill"><span class="material-icons-round">replay</span> Reset</span>
           <span class="ctl-desc">Cancel the session and return to the beginning</span>
-          <span class="ctl-pill">Skip →</span>
+          <span class="ctl-pill">Skip <span class="material-icons-round">skip_next</span></span>
           <span class="ctl-desc">End the current sketch early and move to the next</span>
-          <span class="ctl-pill">⚙</span>
+          <span class="ctl-pill"><span class="material-icons-round">settings</span></span>
           <span class="ctl-desc">Flip the card to adjust number of sketches, time per sketch, and warning threshold — then tap Apply</span>
-          <span class="ctl-pill">? </span>
+          <span class="ctl-pill"><span class="material-icons-round">info_outline</span></span>
           <span class="ctl-desc">Open this guide</span>
-          <span class="ctl-pill">☀ / ☾</span>
+          <span class="ctl-pill"><span class="material-icons-round">light_mode</span> / <span class="material-icons-round">dark_mode</span></span>
           <span class="ctl-desc">Toggle light and dark mode</span>
         </div>
         <p style="margin-top:1rem;">When each minute ends, a <strong>"Move to next sketch!"</strong> overlay appears with an audio alert and auto-closes after 5 seconds. At the end of the full session, a <strong>"Pencils down!"</strong> screen plays a victory chime.</p>
