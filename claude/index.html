@@ -480,6 +480,28 @@
     text-align: center;
     color: var(--text);
   }
+
+  /* Volume control */
+  .volume-btns {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .vol-btn {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-hint);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .vol-btn .material-icons-round { font-size: 16px; line-height: 1; }
+  .vol-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .vol-btn.vol-active { background: var(--accent); border-color: var(--accent); color: white; }
   .settings-apply {
     margin-top: auto;
     padding-top: 1.25rem;
@@ -517,10 +539,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
     transition: all 0.3s;
     position: relative;
     overflow: hidden;
+    padding-bottom: 0;
   }
   .sketch-box.active-box { border-color: var(--accent); background: var(--accent-soft); }
   .sketch-box.done-box   { border-color: var(--border); background: var(--surface); }
@@ -533,21 +555,17 @@
   }
   .sketch-box.active-box .sketch-box-num { color: var(--accent); }
   .sketch-box.done-box   .sketch-box-num { color: var(--border); }
-  .sketch-box-label {
-    font-size: 1.2rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-hint);
-    font-weight: 500;
-  }
   .sketch-box-check {
+    position: absolute;
+    bottom: 16px;
+    left: 0; right: 0;
     display: none;
-    font-size: 2rem !important;
+    justify-content: center;
+    font-size: 1.4rem !important;
     color: var(--border);
-    margin-top: 16px;
     line-height: 1;
   }
-  .sketch-box.done-box .sketch-box-check { display: block; }
+  .sketch-box.done-box .sketch-box-check { display: flex; }
 
   /* ── NOTIFICATION OVERLAY ───────────────── */
   .notif-overlay {
@@ -879,6 +897,20 @@
           </div>
         </div>
 
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Volume</div>
+            <div class="setting-desc">Audio level for alerts and ticks</div>
+          </div>
+          <div class="volume-btns" id="volBtns">
+            <button class="vol-btn" onclick="setVolume(0)" title="Muted"><span class="material-icons-round">volume_off</span></button>
+            <button class="vol-btn" onclick="setVolume(1)" title="Quiet"><span class="material-icons-round">volume_down</span></button>
+            <button class="vol-btn vol-active" onclick="setVolume(2)" title="Medium"><span class="material-icons-round">volume_up</span></button>
+            <button class="vol-btn" onclick="setVolume(3)" title="Loud"><span class="material-icons-round">volume_up</span></button>
+            <button class="vol-btn" onclick="setVolume(4)" title="Extra Loud"><span class="material-icons-round">volume_up</span></button>
+          </div>
+        </div>
+
         <div class="settings-apply">
           <button onclick="applySettings()">Apply Settings</button>
         </div>
@@ -1032,6 +1064,9 @@
       </div>
 
     </div>
+    <div style="text-align:center; padding: 1rem 2rem 1.5rem; border-top: 1px solid var(--border);">
+      <span style="font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-hint); font-weight:500;">Made with AI</span>
+    </div>
   </div>
 </div>
 
@@ -1051,46 +1086,83 @@ let interval      = null;
 let notifTimeout  = null;
 let audioCtx      = null;
 let isFlipped     = false;
+// 0=muted, 1=quiet, 2=medium(default), 3=loud, 4=extra loud
+let volumeLevel   = 2;
+const VOLUME_GAINS = [0, 0.3, 0.7, 1.2, 2.0];
 
 // ── AUDIO ──────────────────────────────────────────────────────────
 function getAudioCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Compressor prevents clipping at high gain levels
+    const comp = audioCtx.createDynamicsCompressor();
+    comp.threshold.value = -6;
+    comp.knee.value      = 6;
+    comp.ratio.value     = 4;
+    comp.attack.value    = 0.003;
+    comp.release.value   = 0.15;
+    comp.connect(audioCtx.destination);
+    audioCtx._out = comp;
+  }
   if (audioCtx.state === 'suspended') audioCtx.resume();
   return audioCtx;
 }
+function volGain(base) {
+  return base * VOLUME_GAINS[volumeLevel];
+}
 function playBeep(type) {
+  if (volumeLevel === 0) return;
   try {
     const ctx = getAudioCtx();
     if (type === 'move') {
       const osc = ctx.createOscillator(), g = ctx.createGain();
-      osc.connect(g); g.connect(ctx.destination);
+      osc.connect(g); g.connect(ctx._out || ctx.destination);
       osc.type = 'sine';
       osc.frequency.setValueAtTime(880, ctx.currentTime);
       osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.12);
-      g.gain.setValueAtTime(0.35, ctx.currentTime);
+      g.gain.setValueAtTime(volGain(0.35), ctx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
       osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.45);
     } else if (type === 'final') {
       [523, 659, 784, 1047].forEach((freq, i) => {
         const o = ctx.createOscillator(), g = ctx.createGain();
-        o.connect(g); g.connect(ctx.destination);
+        o.connect(g); g.connect(ctx._out || ctx.destination);
         o.type = 'sine';
         o.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.18);
         g.gain.setValueAtTime(0, ctx.currentTime + i * 0.18);
-        g.gain.linearRampToValueAtTime(0.3, ctx.currentTime + i * 0.18 + 0.04);
+        g.gain.linearRampToValueAtTime(volGain(0.3), ctx.currentTime + i * 0.18 + 0.04);
         g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.18 + 0.5);
         o.start(ctx.currentTime + i * 0.18); o.stop(ctx.currentTime + i * 0.18 + 0.55);
       });
     } else if (type === 'tick') {
       const osc = ctx.createOscillator(), g = ctx.createGain();
-      osc.connect(g); g.connect(ctx.destination);
+      osc.connect(g); g.connect(ctx._out || ctx.destination);
       osc.type = 'sine';
       osc.frequency.setValueAtTime(660, ctx.currentTime);
-      g.gain.setValueAtTime(0.12, ctx.currentTime);
+      g.gain.setValueAtTime(volGain(0.12), ctx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
       osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.08);
+    } else if (type === 'preview') {
+      // Short pleasant tone played when user selects a volume level
+      const osc = ctx.createOscillator(), g = ctx.createGain();
+      osc.connect(g); g.connect(ctx._out || ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.setValueAtTime(1047, ctx.currentTime + 0.1);
+      g.gain.setValueAtTime(volGain(0.4), ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.4);
     }
   } catch(e) {}
+}
+
+function setVolume(level) {
+  volumeLevel = level;
+  // Update active state on vol buttons
+  const btns = document.querySelectorAll('.vol-btn');
+  btns.forEach((btn, i) => btn.classList.toggle('vol-active', i === level));
+  // Preview the sound at the new level (skip if muted)
+  if (level > 0) playBeep('preview');
 }
 
 // ── START BUTTON HELPER ────────────────────────────────────────────

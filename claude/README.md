@@ -4,8 +4,6 @@
 
 Crazy 8s is a design sprint exercise where you rapidly sketch **8 different ideas in 8 minutes** — one minute per sketch. The time pressure keeps you from overthinking and forces creative output. This timer runs the session automatically, keeping you in the flow.
 
-Created with Claude.
-
 ---
 
 ## Getting Started
@@ -79,8 +77,9 @@ Click the **Settings** icon in the header to animate the main card with a 3D fli
 | Number of sketches | 8 | 2 – 16 | Total sketches in the session |
 | Minutes per sketch | 1 | 1 – 10 | How long each sketch slot lasts |
 | Warning at (seconds left) | 15 | 5 – 60 | When the countdown turns red |
+| Volume | Medium | Muted → Extra Loud (5 levels) | Audio level for all alerts and ticks |
 
-Use the **−** and **+** buttons to adjust each value, then press **Apply Settings** to save. Applying settings resets the current session and flips the card back to the timer.
+Use the **−** and **+** buttons to adjust sketch count, minutes, and warning. For volume, click one of the five icon buttons — a short preview tone plays immediately at the selected level so you can hear the difference before the session starts. Applying settings resets the current session and flips the card back to the timer.
 
 > **Tip:** For longer ideation sessions, try 2 minutes per sketch with 6 sketches. For a real speed challenge, keep 1 minute but increase to 12 sketches.
 
@@ -165,3 +164,7 @@ The timer uses the browser's built-in Web Audio API — no audio files or downlo
 ---
 
 *Crazy 8s Timer — a single-file offline tool. No data is collected or transmitted.*
+
+---
+
+*Made with AI*
