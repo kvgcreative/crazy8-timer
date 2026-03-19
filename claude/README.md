@@ -4,13 +4,15 @@
 
 Crazy 8s is a design sprint exercise where you rapidly sketch **8 different ideas in 8 minutes** — one minute per sketch. The time pressure keeps you from overthinking and forces creative output. This timer runs the session automatically, keeping you in the flow.
 
+Created with Claude.
+
 ---
 
 ## Getting Started
 
 1. No installation or internet connection required — it runs entirely offline.
 2. Have your materials ready: paper divided into 8 boxes, plus pens or markers.
-3. Press **▶ Start** to begin your first sketch immediately.
+3. Press **Start** to begin your first sketch immediately.
 
 ---
 
@@ -18,9 +20,9 @@ Crazy 8s is a design sprint exercise where you rapidly sketch **8 different idea
 
 The main card shows a large circular countdown ring that depletes in real time as each sketch progresses. Inside the ring is the time remaining in `M:SS` format.
 
-- **Circular ring timer** — a thick red arc counts down each sketch. The ring turns a glowing red and a tick sound plays in the final 10 seconds.
+- **Circular ring timer** — a thick red arc counts down each sketch. The number turns red and a tick sound plays in the final 10 seconds.
 - **Sketch indicator** — shows which sketch you're on (e.g. "Sketch 3 of 8") and a dot row tracking all sketches.
-- **Sketch grid** — a grid of all sketch slots below the card. The active slot is highlighted in red; completed slots show a checkmark below the "Sketch" label.
+- **Sketch grid** — a grid of numbered slots below the card. The active slot is highlighted in red; completed slots show a checkmark.
 
 ### Warning State
 
@@ -32,29 +34,45 @@ When **15 seconds** remain (customizable in Settings), the countdown number turn
 
 | Button | What it does |
 |--------|-------------|
-| **▶ Start** | Begins the countdown for the first sketch |
-| **⏸ Pause** | Freezes the timer without losing progress |
-| **▶ Resume** | Continues from where you paused |
-| **↺ Reset** | Cancels the session and returns to the beginning |
-| **Skip →** | Ends the current sketch early and moves to the next |
+| **Start** | Begins the countdown for the first sketch |
+| **Pause** | Freezes the timer without losing progress |
+| **Resume** | Continues from where you paused |
+| **Reset** | Cancels the session and returns to the beginning |
+| **Skip** | Ends the current sketch early and moves to the next |
 
 ---
 
 ## Header Buttons
 
-Three icon buttons sit in the top-right corner:
+Four icon buttons sit in the top-right corner of the header:
 
-| Icon | Action |
-|------|--------|
-| **?** | Opens the About & Instructions modal |
-| **☀ / ☾** | Toggles between light and dark mode |
-| **⚙** | Flips the timer card to reveal Settings |
+| Icon | Action | Mobile |
+|------|--------|--------|
+| Info | Opens the About & Instructions modal | ✓ |
+| Light / Dark | Toggles between light and dark mode | ✓ |
+| Fullscreen | Expands the timer to fill the entire screen | Desktop only |
+| Settings | Flips the timer card to reveal Settings | ✓ |
+
+---
+
+## Fullscreen Mode
+
+Click the **Fullscreen** button in the header to expand the timer into a large, distraction-free view ideal for projecting in a room or displaying on a shared screen. In fullscreen mode:
+
+- The circular ring timer scales to fill the available screen
+- The "Sketch X of Y" label is displayed in large text, readable from across the room
+- All timer controls (Start, Pause, Reset, Skip) remain accessible
+- The sketch progress dots are shown below the ring
+
+**Exiting fullscreen:** click the exit button in the top-right corner of the fullscreen view, or press **Esc** on your keyboard. If the browser enters native fullscreen, dismissing it with Esc will also close the fullscreen view.
+
+> **Note:** The Fullscreen button is hidden on mobile devices, where native fullscreen is handled by the browser itself.
 
 ---
 
 ## Settings (Card Flip)
 
-Clicking **⚙** animates the main card with a 3D flip to reveal the Settings panel on the back. Clicking **⚙** again flips it back to the timer.
+Click the **Settings** icon in the header to animate the main card with a 3D flip, revealing the Settings panel on the back. Click **Settings** again to flip back to the timer.
 
 | Setting | Default | Range | Description |
 |---------|---------|-------|-------------|
@@ -62,7 +80,7 @@ Clicking **⚙** animates the main card with a 3D flip to reveal the Settings pa
 | Minutes per sketch | 1 | 1 – 10 | How long each sketch slot lasts |
 | Warning at (seconds left) | 15 | 5 – 60 | When the countdown turns red |
 
-Use the **− / +** buttons to adjust each value, then press **Apply Settings** to save. Applying settings resets the current session and flips the card back to the timer.
+Use the **−** and **+** buttons to adjust each value, then press **Apply Settings** to save. Applying settings resets the current session and flips the card back to the timer.
 
 > **Tip:** For longer ideation sessions, try 2 minutes per sketch with 6 sketches. For a real speed challenge, keep 1 minute but increase to 12 sketches.
 
@@ -70,21 +88,23 @@ Use the **− / +** buttons to adjust each value, then press **Apply Settings** 
 
 ## About & Instructions Modal
 
-Clicking **?** opens a scrollable modal covering:
+Click the **Info** icon in the header to open a scrollable modal covering:
 
 - What Crazy 8s is and why it works
-- How to use all the timer controls
+- How to use every timer control, with matching icons
 - Step-by-step facilitation guide for before, during, and after a team session
 - Tips for running great sessions (silence, labeling sketches, remote teams, warm-ups, and more)
 
-Dismiss the modal by clicking **✕** or clicking the dark backdrop.
+Dismiss the modal by clicking the **✕** close button or clicking the dark backdrop.
 
 ---
 
 ## Notifications
 
 ### "Move to next sketch!" — between sketches
+
 At the end of each sketch a full-screen overlay appears automatically. It:
+
 - Plays a two-tone audio alert
 - Displays for **5 seconds**, then closes on its own
 - Can be dismissed early by clicking the dark background
@@ -93,7 +113,9 @@ At the end of each sketch a full-screen overlay appears automatically. It:
 The next sketch's timer starts automatically after the notification closes.
 
 ### "Pencils down!" — end of session
+
 When all sketches are complete, a final overlay appears. It:
+
 - Plays a 4-note ascending victory chime
 - Stays on screen until dismissed by clicking the background
 - Confirms how many sketches you completed
@@ -102,19 +124,21 @@ When all sketches are complete, a final overlay appears. It:
 
 ## Light & Dark Mode
 
-Click **☀** or **☾** in the top-right corner to toggle themes. The change applies instantly with no reload required.
+Click the **Light / Dark** icon in the header to toggle themes instantly. No page reload is required.
 
 ---
 
 ## Audio
 
-The timer uses the browser's built-in Web Audio API — no audio files or downloads needed.
+The timer uses the browser's built-in Web Audio API — no audio files or downloads are needed.
 
-- **Tick** — once per second during the final 10 seconds of each sketch
-- **Two-tone alert** — when a sketch ends and the move notification appears
-- **Victory chime** — four ascending notes when the full session is complete
+| Sound | When it plays |
+|-------|--------------|
+| Tick | Once per second during the final 10 seconds of each sketch |
+| Two-tone alert | When a sketch ends and the move notification appears |
+| Victory chime | Four ascending notes when the full session is complete |
 
-> **Note:** Some browsers require a user interaction before audio plays. If you don't hear sounds, make sure your device volume is on and that you've pressed Start first.
+> **Note:** On mobile, audio requires a user interaction (such as pressing Start) before it will play. If you don't hear sounds, make sure your device volume is on and that you have pressed Start first.
 
 ---
 
@@ -122,8 +146,9 @@ The timer uses the browser's built-in Web Audio API — no audio files or downlo
 
 - **Prepare in advance** — have paper, pens, and a clear problem statement ready before pressing Start.
 - **Don't erase** — rough sketches are the goal; keep moving and don't refine mid-sketch.
-- **One idea per box** — use the sketch grid as a visual cue for how many ideas you have left to fill.
+- **One idea per box** — use the sketch grid as a visual cue for how many slots remain.
 - **Limit pausing** — the time pressure is intentional.
+- **Use fullscreen** — if running a group session, put the timer in fullscreen on a projector or shared display so everyone can see the countdown and sketch label clearly.
 - **Review after** — lay all sketches out side-by-side and look for patterns or standout concepts to develop.
 
 ---

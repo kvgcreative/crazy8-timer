@@ -99,6 +99,10 @@
   .icon-btn:hover  { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
   .icon-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
 
+  @media (max-width: 768px) {
+    #fsBtn { display: none; }
+  }
+
   /* ── STATUS BAR ─────────────────────────── */
   .status-bar {
     display: flex;
@@ -275,6 +279,162 @@
   }
   .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
   .btn:disabled { opacity: 0.38; cursor: not-allowed; }
+
+  /* ── FULLSCREEN MODE ─────────────────────── */
+  body.fs-mode {
+    overflow: hidden;
+  }
+  body.fs-mode .app {
+    display: none;
+  }
+  .fs-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    background: var(--bg);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  body.fs-mode .fs-overlay { display: flex; }
+
+  .fs-header {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+  }
+  .fs-logo { display: flex; align-items: center; gap: 12px; }
+  .fs-logo-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+  .fs-logo-text {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .fs-exit-btn {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .fs-exit-btn .material-icons-round { font-size: 20px; line-height: 1; }
+  .fs-exit-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+  .fs-status {
+    position: absolute;
+    top: 5rem; left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+  }
+  .fs-status-pill {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 100px;
+  }
+  .fs-status-pill.idle    { background: var(--surface2); color: var(--text-muted); }
+  .fs-status-pill.running { background: var(--accent-soft); color: var(--accent); }
+  .fs-status-pill.done    { background: var(--green-soft); color: var(--green); }
+  .fs-status-pill.paused  { background: var(--surface2); color: var(--text-muted); }
+
+  .fs-sketch-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: min(6vw, 5vh);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-bottom: 1rem;
+    text-align: center;
+    line-height: 1;
+  }
+
+  /* Fluid circle: fills available viewport */
+  .fs-circle-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(70vw, 70vh);
+    height: min(70vw, 70vh);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .fs-circle-wrap svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .fs-ring-bg       { fill: none; stroke: var(--surface2); stroke-width: 14; }
+  .fs-ring-track    { fill: none; stroke: var(--border);   stroke-width: 14; }
+  .fs-ring-progress {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 14;
+    stroke-linecap: butt;
+    transition: stroke-dashoffset 1s linear;
+  }
+  .fs-circle-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fs-time {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: min(20vw, 20vh);
+    line-height: 1;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    transition: color 0.3s;
+  }
+  .fs-time.warning { color: var(--accent); }
+
+  .fs-controls {
+    display: flex;
+    gap: 14px;
+    margin-top: 2rem;
+    justify-content: center;
+  }
+  .fs-dots {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1.5rem;
+    max-width: 400px;
+  }
+  .fs-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: transparent;
+    transition: all 0.3s;
+  }
+  .fs-dot.done   { background: var(--accent); border-color: var(--accent); }
+  .fs-dot.active { border-color: var(--accent); background: var(--accent-soft); }
 
   /* ── SETTINGS BACK ──────────────────────── */
   .settings-title {
@@ -637,6 +797,7 @@
     <div class="header-controls">
       <button class="icon-btn" id="aboutBtn"    title="About & Instructions" onclick="toggleAbout()"><span class="material-icons-round">info_outline</span></button>
       <button class="icon-btn" id="themeBtn"    title="Toggle theme" onclick="toggleTheme()"><span class="material-icons-round" id="themeIcon">light_mode</span></button>
+      <button class="icon-btn" id="fsBtn"       title="Fullscreen timer" onclick="enterFullscreen()"><span class="material-icons-round">fullscreen</span></button>
       <button class="icon-btn" id="settingsBtn" title="Settings" onclick="toggleSettings()"><span class="material-icons-round">settings</span></button>
     </div>
   </header>
@@ -731,6 +892,45 @@
 
 </div>
 
+<!-- ── FULLSCREEN OVERLAY ── -->
+<div class="fs-overlay" id="fsOverlay">
+  <div class="fs-header">
+    <div class="fs-logo">
+      <div class="fs-logo-num">C8</div>
+      <div class="fs-logo-text">Crazy Eights Timer</div>
+    </div>
+    <button class="fs-exit-btn" title="Exit fullscreen" onclick="exitFullscreen()">
+      <span class="material-icons-round">fullscreen_exit</span>
+    </button>
+  </div>
+
+  <div class="fs-status">
+    <span class="fs-status-pill idle" id="fsStatusPill">Idle</span>
+  </div>
+
+  <div class="fs-sketch-label" id="fsSketchLabel">Sketch 1 of 8</div>
+
+  <div class="fs-circle-wrap" id="fsCircleWrap">
+    <svg id="fsSvg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <circle class="fs-ring-bg"       cx="100" cy="100" r="88"/>
+      <circle class="fs-ring-track"    cx="100" cy="100" r="88"/>
+      <circle class="fs-ring-progress" cx="100" cy="100" r="88" id="fsRingProgress"
+        stroke-dasharray="552.92" stroke-dashoffset="0"/>
+    </svg>
+    <div class="fs-circle-inner">
+      <div class="fs-time" id="fsTime">1:00</div>
+    </div>
+  </div>
+
+  <div class="fs-dots" id="fsDots"></div>
+
+  <div class="fs-controls">
+    <button class="btn" id="fsResetBtn" onclick="resetTimer()" disabled><span class="material-icons-round btn-icon">replay</span> Reset</button>
+    <button class="btn btn-primary" id="fsStartBtn" onclick="toggleTimer()"><span class="material-icons-round btn-icon" id="fsStartIcon">play_arrow</span> <span id="fsStartLabel">Start</span></button>
+    <button class="btn" id="fsSkipBtn" onclick="skipSketch()" disabled>Skip <span class="material-icons-round btn-icon">skip_next</span></button>
+  </div>
+</div>
+
 <!-- ── NOTIFICATION OVERLAY ── -->
 <div class="notif-overlay" id="notifOverlay">
   <div class="notif-card" id="notifCard">
@@ -772,6 +972,8 @@
           <span class="ctl-desc">Cancel the session and return to the beginning</span>
           <span class="ctl-pill">Skip <span class="material-icons-round">skip_next</span></span>
           <span class="ctl-desc">End the current sketch early and move to the next</span>
+          <span class="ctl-pill"><span class="material-icons-round">fullscreen</span></span>
+          <span class="ctl-desc">Expand the timer to fill the entire screen — ideal for projecting in a room. Not available on mobile. Press <strong>Esc</strong> or tap the exit button to return.</span>
           <span class="ctl-pill"><span class="material-icons-round">settings</span></span>
           <span class="ctl-desc">Flip the card to adjust number of sketches, time per sketch, and warning threshold — then tap Apply</span>
           <span class="ctl-pill"><span class="material-icons-round">info_outline</span></span>
@@ -896,6 +1098,7 @@ function setStartBtn(icon, label, disabled) {
   document.getElementById('startIcon').textContent = icon;
   document.getElementById('startLabel').textContent = label;
   document.getElementById('startBtn').disabled = !!disabled;
+  syncFullscreen();
 }
 
 // ── AUDIO UNLOCK (mobile requires user-gesture resume) ─────────────
@@ -1024,6 +1227,7 @@ function updateDisplay() {
   document.getElementById('sketchTotal').textContent   = settings.sketches;
   buildDots();
   updateGrid();
+  syncFullscreen();
 }
 
 function updateStatus(s, meta) {
@@ -1031,6 +1235,7 @@ function updateStatus(s, meta) {
   pill.className    = 'status-pill ' + s;
   pill.textContent  = s.charAt(0).toUpperCase() + s.slice(1);
   document.getElementById('statusMeta').textContent = meta;
+  syncFsStatus(s);
 }
 
 // ── NOTIFICATIONS ──────────────────────────────────────────────────
@@ -1150,6 +1355,86 @@ function toggleTheme() {
   document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   document.getElementById('themeIcon').textContent = isDark ? 'dark_mode' : 'light_mode';
 }
+
+// ── FULLSCREEN ─────────────────────────────────────────────────────
+const FS_R = 88;
+const FS_CIRC = +(2 * Math.PI * FS_R).toFixed(2); // 552.92
+
+function enterFullscreen() {
+  document.body.classList.add('fs-mode');
+  // attempt browser native fullscreen (best-effort)
+  const el = document.documentElement;
+  if (el.requestFullscreen)            el.requestFullscreen().catch(() => {});
+  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  document.getElementById('fsRingProgress').style.strokeDasharray = FS_CIRC;
+  syncFullscreen();
+}
+
+function exitFullscreen() {
+  document.body.classList.remove('fs-mode');
+  if (document.fullscreenElement) {
+    document.exitFullscreen().catch(() => {});
+  } else if (document.webkitFullscreenElement) {
+    document.webkitExitFullscreen();
+  }
+}
+
+// Keep fs overlay in sync whenever display updates
+function syncFullscreen() {
+  if (!document.body.classList.contains('fs-mode')) return;
+
+  // Time display
+  const mins = Math.floor(secondsLeft / 60);
+  const secs = secondsLeft % 60;
+  const fsTimeEl = document.getElementById('fsTime');
+  fsTimeEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+  const warn = secondsLeft <= settings.warning && state === 'running';
+  fsTimeEl.className = 'fs-time' + (warn ? ' warning' : '');
+
+  // Ring
+  const ring = document.getElementById('fsRingProgress');
+  const pct  = totalSeconds > 0 ? secondsLeft / totalSeconds : 1;
+  ring.style.strokeDashoffset = (FS_CIRC * (1 - pct)).toFixed(2);
+  ring.style.filter = warn ? 'drop-shadow(0 0 8px var(--accent))' : 'none';
+
+  // Sketch label
+  document.getElementById('fsSketchLabel').textContent =
+    state === 'done' ? 'Session complete!' : `Sketch ${currentSketch} of ${settings.sketches}`;
+
+  // Dots
+  const dotsEl = document.getElementById('fsDots');
+  dotsEl.innerHTML = '';
+  for (let i = 1; i <= settings.sketches; i++) {
+    const d = document.createElement('div');
+    d.className = 'fs-dot' + (i < currentSketch ? ' done' : i === currentSketch ? ' active' : '');
+    dotsEl.appendChild(d);
+  }
+
+  // Button states mirror main card
+  document.getElementById('fsResetBtn').disabled = document.getElementById('resetBtn').disabled;
+  document.getElementById('fsSkipBtn').disabled  = document.getElementById('skipBtn').disabled;
+  document.getElementById('fsStartIcon').textContent  = document.getElementById('startIcon').textContent;
+  document.getElementById('fsStartLabel').textContent = document.getElementById('startLabel').textContent;
+  document.getElementById('fsStartBtn').disabled      = document.getElementById('startBtn').disabled;
+}
+
+function syncFsStatus(s) {
+  const pill = document.getElementById('fsStatusPill');
+  pill.className   = 'fs-status-pill ' + s;
+  pill.textContent = s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// Exit fs when browser native fullscreen is dismissed (e.g. Esc key)
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    document.body.classList.remove('fs-mode');
+  }
+});
+document.addEventListener('webkitfullscreenchange', () => {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    document.body.classList.remove('fs-mode');
+  }
+});
 
 // ── INIT ───────────────────────────────────────────────────────────
 function init() {
