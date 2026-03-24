@@ -13,13 +13,13 @@
     --surface2: #f0eeea;
     --border: #e0ddd8;
     --text: #1a1918;
-    --text-muted: #6b6864;
-    --text-hint: #aaa8a4;
-    --accent: #d63429;
+    --text-muted: #5a5754;      /* was #6b6864 — darkened to 7.0:1 on white */
+    --text-hint: #666360;       /* was #aaa8a4 (2.6:1 fail) — 5.3:1 on white, 4.6:1 on surface2 */
+    --accent: #c0281d;          /* was #d63429 — darkened to 5.5:1 on white */
     --accent-soft: #fce8e7;
-    --accent-dark: #a8271e;
+    --accent-dark: #8f1f16;
     --charcoal: #2c2b29;
-    --green: #1a7a4a;
+    --green: #155e38;           /* was #1a7a4a (4.3:1 fail on green-soft) — darkened to 5.2:1 on green-soft */
     --green-soft: #e8f5ee;
     --shadow: 0 2px 12px rgba(0,0,0,0.07);
     --shadow-lg: 0 8px 32px rgba(0,0,0,0.14);
@@ -30,13 +30,13 @@
     --surface2: #2a292c;
     --border: #38363a;
     --text: #f0eee8;
-    --text-muted: #a09ea0;
-    --text-hint: #6a6868;
-    --accent: #e84040;
+    --text-muted: #b8b6b8;      /* was #a09ea0 (4.1:1 fail) — lightened to 6.2:1 on #222124 */
+    --text-hint: #8e8c8e;       /* was #6a6868 (2.2:1 fail) — lightened to 4.6:1 on #222124 */
+    --accent: #f05252;          /* was #e84040 — lightened to 4.6:1 on #222124 */
     --accent-soft: #2e1616;
-    --accent-dark: #ff6b6b;
+    --accent-dark: #ff8080;
     --charcoal: #e0ddd8;
-    --green: #2eb86a;
+    --green: #3dd68a;           /* was #2eb86a — lightened to 4.6:1 on #222124 */
     --green-soft: #0e2018;
     --shadow: 0 2px 12px rgba(0,0,0,0.3);
     --shadow-lg: 0 8px 40px rgba(0,0,0,0.55);
@@ -123,9 +123,11 @@
     border-radius: 100px;
   }
   .status-pill.idle    { background: var(--surface2); color: var(--text-muted); }
-  .status-pill.running { background: var(--accent-soft); color: var(--accent); }
-  .status-pill.done    { background: var(--green-soft); color: var(--green); }
+  .status-pill.running { background: var(--accent-soft); color: #8f1f16; }   /* #8f1f16 on #fce8e7 = 7.1:1 */
+  .status-pill.done    { background: var(--green-soft); color: #0e4026; }    /* #0e4026 on #e8f5ee = 7.9:1 */
   .status-pill.paused  { background: var(--surface2); color: var(--text-muted); }
+  [data-theme="dark"] .status-pill.running { background: var(--accent-soft); color: #f8aaaa; }  /* #f8aaaa on #2e1616 = 5.2:1 */
+  [data-theme="dark"] .status-pill.done    { background: var(--green-soft); color: #5ddba0; }   /* #5ddba0 on #0e2018 = 5.3:1 */
   .status-meta {
     font-family: 'DM Mono', monospace;
     font-size: 0.7rem;
@@ -353,9 +355,11 @@
     border-radius: 100px;
   }
   .fs-status-pill.idle    { background: var(--surface2); color: var(--text-muted); }
-  .fs-status-pill.running { background: var(--accent-soft); color: var(--accent); }
-  .fs-status-pill.done    { background: var(--green-soft); color: var(--green); }
+  .fs-status-pill.running { background: var(--accent-soft); color: #8f1f16; }
+  .fs-status-pill.done    { background: var(--green-soft); color: #0e4026; }
   .fs-status-pill.paused  { background: var(--surface2); color: var(--text-muted); }
+  [data-theme="dark"] .fs-status-pill.running { background: var(--accent-soft); color: #f8aaaa; }
+  [data-theme="dark"] .fs-status-pill.done    { background: var(--green-soft); color: #5ddba0; }
 
   .fs-sketch-label {
     font-family: 'Bebas Neue', sans-serif;
@@ -565,6 +569,7 @@
     color: var(--border);
     line-height: 1;
   }
+  [data-theme="dark"] .sketch-box-check { color: var(--border); }
   .sketch-box.done-box .sketch-box-check { display: flex; }
 
   /* ── NOTIFICATION OVERLAY ───────────────── */
@@ -602,8 +607,8 @@
     line-height: 1.05;
     margin-bottom: 0.5rem;
   }
-  .notif-headline.accent { color: var(--accent); }
-  .notif-headline.green  { color: var(--green); }
+  .notif-headline.accent { color: var(--accent); }   /* #c0281d on #fff = 5.5:1 ✓ */
+  .notif-headline.green  { color: var(--green); }    /* #155e38 on #fff = 7.5:1 ✓ */
   .notif-sub { font-size: 0.85rem; color: var(--text-muted); letter-spacing: 0.06em; }
   .notif-timer {
     margin-top: 1.5rem;
@@ -799,7 +804,8 @@
     gap: 5px;
   }
   .ctl-pill .material-icons-round { font-size: 16px; line-height: 1; }
-  .ctl-pill.red { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .ctl-pill.red { background: var(--accent-soft); border-color: var(--accent); color: #8f1f16; }  /* 7.1:1 on #fce8e7 */
+  [data-theme="dark"] .ctl-pill.red { background: var(--accent-soft); border-color: var(--accent); color: #f8aaaa; }
   .ctl-desc { font-size: 0.83rem; color: var(--text-muted); line-height: 1.5; }
 </style>
 </head>
