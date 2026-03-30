@@ -557,8 +557,10 @@
     line-height: 1;
     transition: color 0.3s;
   }
+  [data-theme="dark"] .sketch-box-num { color: #6a6868; }
   .sketch-box.active-box .sketch-box-num { color: var(--accent); }
   .sketch-box.done-box   .sketch-box-num { color: var(--border); }
+  [data-theme="dark"] .sketch-box.done-box .sketch-box-num { color: #4e4c4e; }
   .sketch-box-check {
     position: absolute;
     bottom: 16px;
@@ -569,7 +571,7 @@
     color: var(--border);
     line-height: 1;
   }
-  [data-theme="dark"] .sketch-box-check { color: var(--border); }
+  [data-theme="dark"] .sketch-box-check { color: #4e4c4e; }
   .sketch-box.done-box .sketch-box-check { display: flex; }
 
   /* ── NOTIFICATION OVERLAY ───────────────── */
