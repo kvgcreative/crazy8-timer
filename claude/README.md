@@ -167,4 +167,10 @@ The timer uses the browser's built-in Web Audio API — no audio files or downlo
 
 ---
 
-*Made with AI*
+## Made with AI
+
+This web app was designed and built entirely with AI. All code, content, layout, and design decisions were generated through a conversation with **Claude**, made by [Anthropic](https://www.anthropic.com).
+
+**Model used:** Claude Sonnet 4.6
+
+No templates, frameworks, or external build tools were used. The entire application is a single self-contained HTML file produced through iterative AI-assisted development.
