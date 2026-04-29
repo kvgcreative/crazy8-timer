@@ -1416,6 +1416,11 @@ function toggleAbout() {
 function handleAboutBg(e) {
   if (e.target === document.getElementById('aboutOverlay')) toggleAbout();
 }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('aboutOverlay').classList.contains('show')) {
+    toggleAbout();
+  }
+});
 
 // ── BUILD / UPDATE UI ──────────────────────────────────────────────
 function buildDots() {
