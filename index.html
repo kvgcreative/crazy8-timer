@@ -588,51 +588,102 @@
     justify-content: center;
   }
   .notif-overlay.show { display: flex; }
+
+  /* Shared card base */
   .notif-card {
     background: var(--surface);
     border-radius: 24px;
-    padding: 3rem 3.5rem;
     text-align: center;
-    max-width: 440px;
     width: 90%;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0px 8px 32px rgba(0,0,0,0.14);
     animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
   }
-  .notif-card.final { border-top: 5px solid var(--green); }
-  .notif-card.move  { border-top: 5px solid var(--accent); }
+
+  /* "Move" card — matches Figma exactly */
+  .notif-card.move {
+    max-width: 520px;
+    min-height: 320px;
+    padding: 48px 56px;
+  }
+
+  /* "Final" card — matches Figma done variant */
+  .notif-card.final {
+    max-width: 520px;
+    min-height: 320px;
+    padding: 48px 56px;
+  }
+
   @keyframes popIn {
     from { transform: scale(0.8); opacity: 0; }
     to   { transform: scale(1);   opacity: 1; }
   }
-  .notif-icon { font-size: 3rem; margin-bottom: 1rem; line-height: 1; }
+
+  /* Icon circle — Figma: 72px circle, soft red bg, arrow_forward icon */
+  .notif-icon-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .notif-icon-circle.accent-circle { background: var(--accent-soft); }
+  .notif-icon-circle.success-circle { background: var(--green-soft); }
+  .notif-icon-circle .material-icons-round {
+    font-size: 36px;
+    line-height: 1;
+  }
+  .notif-icon-circle.accent-circle  .material-icons-round { color: #8f1f16; }
+  .notif-icon-circle.success-circle .material-icons-round { color: #0e4026; }
+  [data-theme="dark"] .notif-icon-circle.accent-circle  .material-icons-round { color: #f8aaaa; }
+  [data-theme="dark"] .notif-icon-circle.success-circle .material-icons-round { color: #5ddba0; }
+
+  /* Headline — Figma: Bebas Neue 48px, #18171a, tracking 1px, single line */
   .notif-headline {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 3.5rem;
-    letter-spacing: 3px;
-    line-height: 1.05;
-    margin-bottom: 0.5rem;
+    font-size: 3rem;
+    letter-spacing: 1px;
+    line-height: 1.08;
+    color: var(--text);
+    margin: 0;
   }
-  .notif-headline.accent { color: var(--accent); }   /* #c0281d on #fff = 5.5:1 ✓ */
-  .notif-headline.green  { color: var(--green); }    /* #155e38 on #fff = 7.5:1 ✓ */
-  .notif-sub { font-size: 0.85rem; color: var(--text-muted); letter-spacing: 0.06em; }
+  .notif-headline.accent { color: var(--text); }       /* move card — dark text per Figma */
+  .notif-headline.green  { color: var(--text); }        /* final card — dark text per Figma */
+
+  /* Sub — Figma: DM Sans 14px, muted */
+  .notif-sub {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.43;
+    margin: 0;
+  }
+
+  /* Progress timer bar — kept below sub */
   .notif-timer {
-    margin-top: 1.5rem;
     font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     color: var(--text-hint);
     letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
   }
-  .notif-timer span {
-    display: inline-block;
-    width: 60px; height: 3px;
+  .notif-timer-track {
+    width: 80px;
+    height: 3px;
     border-radius: 3px;
     background: var(--border);
-    vertical-align: middle;
-    margin-left: 8px;
     overflow: hidden;
     position: relative;
   }
-  .notif-timer span::after {
+  .notif-timer-track::after {
     content: '';
     position: absolute;
     left: 0; top: 0; bottom: 0;
@@ -640,6 +691,98 @@
     animation: shrink 5s linear forwards;
   }
   @keyframes shrink { from { width: 100%; } to { width: 0%; } }
+
+  /* ── CONFIRM RESET MODAL ─────────────────── */
+  .confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 250;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .confirm-overlay.show { display: flex; }
+  .confirm-card {
+    background: var(--surface);
+    border-radius: 24px;
+    text-align: center;
+    width: 90%;
+    max-width: 440px;
+    padding: 40px 48px;
+    box-shadow: 0px 8px 32px rgba(0,0,0,0.14);
+    animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .confirm-icon-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 64px;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .confirm-icon-circle .material-icons-round {
+    font-size: 30px;
+    line-height: 1;
+    color: var(--text-muted);
+  }
+  .confirm-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.75rem;
+    letter-spacing: 1px;
+    line-height: 1.1;
+    color: var(--text);
+    margin: 0;
+  }
+  .confirm-sub {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+  }
+  .confirm-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    width: 100%;
+    justify-content: center;
+  }
+  .confirm-cancel {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.65rem 1.6rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+    flex: 1;
+    max-width: 160px;
+  }
+  .confirm-cancel:hover { border-color: var(--text-muted); }
+  .confirm-reset {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.65rem 1.6rem;
+    border-radius: 100px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex: 1;
+    max-width: 160px;
+  }
+  .confirm-reset:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
 
   /* ── ABOUT MODAL ────────────────────────── */
   .about-overlay {
@@ -833,8 +976,8 @@
 
   <!-- STATUS -->
   <div class="status-bar">
-    <span class="status-pill idle" id="statusPill">Idle</span>
-    <span class="status-meta" id="statusMeta">Ready to sketch</span>
+    <span class="status-pill idle" id="statusPill">Ready</span>
+    <span class="status-meta" id="statusMeta">1 min per sketch / 8 min session</span>
   </div>
 
   <!-- ── FLIP CARD ── -->
@@ -948,7 +1091,7 @@
   </div>
 
   <div class="fs-status">
-    <span class="fs-status-pill idle" id="fsStatusPill">Idle</span>
+    <span class="fs-status-pill idle" id="fsStatusPill">Ready</span>
   </div>
 
   <div class="fs-sketch-label" id="fsSketchLabel">Sketch 1 of 8</div>
@@ -974,13 +1117,32 @@
   </div>
 </div>
 
+<!-- ── CONFIRM RESET MODAL ── -->
+<div class="confirm-overlay" id="confirmOverlay" onclick="if(event.target===this)closeConfirmReset()">
+  <div class="confirm-card">
+    <div class="confirm-icon-circle">
+      <span class="material-icons-round">replay</span>
+    </div>
+    <div class="confirm-headline">Reset session?</div>
+    <div class="confirm-sub">All progress will be lost and the timer will return to the beginning.</div>
+    <div class="confirm-actions">
+      <button class="confirm-cancel" onclick="closeConfirmReset()">Cancel</button>
+      <button class="confirm-reset" onclick="confirmReset()">Reset</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── NOTIFICATION OVERLAY ── -->
 <div class="notif-overlay" id="notifOverlay">
   <div class="notif-card" id="notifCard">
-    <div class="notif-icon" id="notifIcon">✏️</div>
-    <div class="notif-headline" id="notifHeadline">Move to next<br>sketch!</div>
-    <div class="notif-sub" id="notifSub">Keep the ideas flowing</div>
-    <div class="notif-timer" id="notifTimerBar">Auto-closing <span></span></div>
+    <div class="notif-icon-circle accent-circle" id="notifIconCircle">
+      <span class="material-icons-round" id="notifIconMat">arrow_forward</span>
+    </div>
+    <div class="notif-headline" id="notifHeadline">Move to next sketch!</div>
+    <div class="notif-sub" id="notifSub">Sketch 2 of 8 starting soon.</div>
+    <div class="notif-timer" id="notifTimerBar">
+      Auto-closing <div class="notif-timer-track" id="notifTimerTrack"></div>
+    </div>
   </div>
 </div>
 
@@ -1316,33 +1478,45 @@ function updateDisplay() {
 function updateStatus(s, meta) {
   const pill = document.getElementById('statusPill');
   pill.className    = 'status-pill ' + s;
-  pill.textContent  = s.charAt(0).toUpperCase() + s.slice(1);
+  pill.textContent  = s === 'idle' ? 'Ready' : s.charAt(0).toUpperCase() + s.slice(1);
   document.getElementById('statusMeta').textContent = meta;
   syncFsStatus(s);
 }
 
 // ── NOTIFICATIONS ──────────────────────────────────────────────────
 function showNotif(type) {
-  const overlay  = document.getElementById('notifOverlay');
-  const card     = document.getElementById('notifCard');
-  const headline = document.getElementById('notifHeadline');
-  const sub      = document.getElementById('notifSub');
-  const bar      = document.getElementById('notifTimerBar');
-  document.getElementById('notifIcon').textContent = type === 'move' ? '✏️' : '🎨';
+  const overlay      = document.getElementById('notifOverlay');
+  const card         = document.getElementById('notifCard');
+  const iconCircle   = document.getElementById('notifIconCircle');
+  const iconMat      = document.getElementById('notifIconMat');
+  const headline     = document.getElementById('notifHeadline');
+  const sub          = document.getElementById('notifSub');
+  const bar          = document.getElementById('notifTimerBar');
+
   if (type === 'move') {
-    card.className     = 'notif-card move';
-    headline.className = 'notif-headline accent';
-    headline.innerHTML = 'Move to next<br>sketch!';
-    sub.textContent    = `Sketch ${currentSketch + 1} of ${settings.sketches} — keep the ideas flowing`;
-    bar.style.display  = '';
-    bar.innerHTML      = 'Auto-closing <span></span>';
+    card.className           = 'notif-card move';
+    iconCircle.className     = 'notif-icon-circle accent-circle';
+    iconMat.textContent      = 'arrow_forward';
+    headline.className       = 'notif-headline accent';
+    headline.textContent     = 'Move to next sketch!';
+    sub.textContent          = `Sketch ${currentSketch + 1} of ${settings.sketches} starting soon.`;
+    bar.style.display        = 'flex';
+    // Re-trigger CSS animation by replacing the track element
+    const oldTrack = document.getElementById('notifTimerTrack');
+    const newTrack = document.createElement('div');
+    newTrack.className = 'notif-timer-track';
+    newTrack.id = 'notifTimerTrack';
+    oldTrack.replaceWith(newTrack);
   } else {
-    card.className     = 'notif-card final';
-    headline.className = 'notif-headline green';
-    headline.innerHTML = 'Pencils<br>down!';
-    sub.textContent    = `You completed all ${settings.sketches} sketches — great work!`;
-    bar.style.display  = 'none';
+    card.className           = 'notif-card final';
+    iconCircle.className     = 'notif-icon-circle success-circle';
+    iconMat.textContent      = 'celebration';
+    headline.className       = 'notif-headline green';
+    headline.textContent     = 'Pencils down!';
+    sub.textContent          = `Great work. Share your sketches with the team.`;
+    bar.style.display        = 'none';
   }
+
   overlay.classList.add('show');
   clearTimeout(notifTimeout);
   if (type === 'move') notifTimeout = setTimeout(() => overlay.classList.remove('show'), 5000);
@@ -1351,13 +1525,31 @@ function showNotif(type) {
 
 // ── TIMER LOGIC ────────────────────────────────────────────────────
 function resetTimer() {
+  // If a session is in progress, show confirmation dialog instead
+  if (state === 'running' || state === 'paused') {
+    document.getElementById('confirmOverlay').classList.add('show');
+    return;
+  }
+  doReset();
+}
+
+function confirmReset() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+  doReset();
+}
+
+function closeConfirmReset() {
+  document.getElementById('confirmOverlay').classList.remove('show');
+}
+
+function doReset() {
   clearInterval(interval); interval = null;
   state         = 'idle';
   currentSketch = 1;
   secondsLeft   = settings.minutes * 60;
   totalSeconds  = settings.minutes * 60;
   updateDisplay();
-  updateStatus('idle', 'Ready to sketch');
+  updateStatus('idle', `${settings.minutes} min per sketch / ${settings.sketches * settings.minutes} min session`);
   setStartBtn('play_arrow', 'Start', false);
   document.getElementById('resetBtn').disabled     = true;
   document.getElementById('skipBtn').disabled      = true;
@@ -1504,7 +1696,7 @@ function syncFullscreen() {
 function syncFsStatus(s) {
   const pill = document.getElementById('fsStatusPill');
   pill.className   = 'fs-status-pill ' + s;
-  pill.textContent = s.charAt(0).toUpperCase() + s.slice(1);
+  pill.textContent = s === 'idle' ? 'Ready' : s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 // Exit fs when browser native fullscreen is dismissed (e.g. Esc key)
@@ -1530,7 +1722,7 @@ function init() {
   buildGrid();
   buildDots();
   updateDisplay();
-  updateStatus('idle', 'Ready to sketch');
+  updateStatus('idle', `${settings.minutes} min per sketch / ${settings.sketches * settings.minutes} min session`);
   setTimeout(syncCardHeight, 120);
   window.addEventListener('resize', syncCardHeight);
 }
