@@ -1177,6 +1177,10 @@
           <span class="ctl-desc">Cancel the session and return to the beginning</span>
           <span class="ctl-pill">Skip <span class="material-icons-round">skip_next</span></span>
           <span class="ctl-desc">End the current sketch early and move to the next</span>
+          <span class="ctl-pill" style="font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.05em;">Space</span>
+          <span class="ctl-desc">Start, pause, or resume the timer from the keyboard — disabled when a modal is open</span>
+          <span class="ctl-pill" style="font-family:'DM Mono',monospace; font-size:0.75rem; letter-spacing:0.05em;">Esc</span>
+          <span class="ctl-desc">Close this guide when it is open</span>
           <span class="ctl-pill"><span class="material-icons-round">fullscreen</span></span>
           <span class="ctl-desc">Expand the timer to fill the entire screen — ideal for projecting in a room. Not available on mobile. Press <strong>Esc</strong> or tap the exit button to return.</span>
           <span class="ctl-pill"><span class="material-icons-round">settings</span></span>
@@ -1417,8 +1421,21 @@ function handleAboutBg(e) {
   if (e.target === document.getElementById('aboutOverlay')) toggleAbout();
 }
 document.addEventListener('keydown', e => {
+  // Escape — close About modal
   if (e.key === 'Escape' && document.getElementById('aboutOverlay').classList.contains('show')) {
     toggleAbout();
+    return;
+  }
+  // Spacebar — start / pause / resume (only when no modal is open and session is not done)
+  if (e.key === ' ' || e.code === 'Space') {
+    const anyModalOpen =
+      document.getElementById('aboutOverlay').classList.contains('show') ||
+      document.getElementById('confirmOverlay').classList.contains('show') ||
+      document.getElementById('notifOverlay').classList.contains('show');
+    if (anyModalOpen) return;
+    if (state === 'done') return;
+    e.preventDefault(); // prevent page scroll
+    toggleTimer();
   }
 });
 

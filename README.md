@@ -35,8 +35,15 @@ When **15 seconds** remain (customizable in Settings), the countdown number turn
 | **Start** | Begins the countdown for the first sketch |
 | **Pause** | Freezes the timer without losing progress |
 | **Resume** | Continues from where you paused |
-| **Reset** | Cancels the session and returns to the beginning |
+| **Reset** | Cancels the session — confirms via dialog if a session is active |
 | **Skip** | Ends the current sketch early and moves to the next |
+
+## Keyboard Shortcuts
+
+| Key | What it does |
+|-----|-------------|
+| **Space** | Start, pause, or resume the timer — disabled when any modal is open |
+| **Esc** | Close the About & Instructions modal |
 
 ---
 
