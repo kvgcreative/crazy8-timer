@@ -47,18 +47,32 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html, body {
+    height: 100%;
+  }
+
   body {
     font-family: 'DM Sans', sans-serif;
     background: var(--bg);
     color: var(--text);
-    min-height: 100vh;
+    min-height: 100dvh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     transition: background 0.3s, color 0.3s;
   }
 
   .app {
     max-width: 680px;
+    width: 100%;
     margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
+    padding: 1.5rem 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
   }
 
   /* ── HEADER ─────────────────────────────── */
@@ -66,7 +80,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
+    flex-shrink: 0;
   }
   .logo { display: flex; align-items: center; gap: 14px; }
   .logo-num {
@@ -115,7 +130,8 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.75rem;
+    flex-shrink: 0;
   }
   .status-pill {
     font-size: 0.7rem;
@@ -140,7 +156,8 @@
   /* ── CARD FLIP ──────────────────────────── */
   .card-scene {
     perspective: 1400px;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.75rem;
+    flex-shrink: 0;
   }
   .card-flipper {
     position: relative;
@@ -535,10 +552,11 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
-    margin-bottom: 1.5rem;
+    flex: 1;
+    min-height: 0;
+    align-content: stretch;
   }
   .sketch-box {
-    aspect-ratio: 3/4;
     border-radius: 10px;
     border: 1.5px solid var(--border);
     background: var(--surface2);
@@ -549,13 +567,13 @@
     transition: all 0.3s;
     position: relative;
     overflow: hidden;
-    padding-bottom: 0;
+    min-height: 0;
   }
   .sketch-box.active-box { border-color: var(--accent); background: var(--accent-soft); }
   .sketch-box.done-box   { border-color: var(--border); background: var(--surface); }
   .sketch-box-num {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 3.2rem;
+    font-size: clamp(1.4rem, 4.5vh, 3.2rem);
     color: #aaa8a4;
     line-height: 1;
     transition: color 0.3s;
@@ -566,11 +584,11 @@
   [data-theme="dark"] .sketch-box.done-box .sketch-box-num { color: #4e4c4e; }
   .sketch-box-check {
     position: absolute;
-    bottom: 16px;
+    bottom: clamp(8px, 1.5vh, 16px);
     left: 0; right: 0;
     display: none;
     justify-content: center;
-    font-size: 1.4rem !important;
+    font-size: clamp(0.9rem, 2.5vh, 1.4rem) !important;
     color: var(--border);
     line-height: 1;
   }
@@ -1363,14 +1381,16 @@ function syncCardHeight() {
   const flipper = document.getElementById('cardFlipper');
   const front   = document.getElementById('cardFront');
   const back    = document.getElementById('cardBack');
-  // temporarily un-absolute the back to measure its height
-  back.style.position = 'relative';
-  back.style.transform = 'none';
+
+  // Temporarily make back visible and in-flow to measure its natural height
+  back.style.position   = 'relative';
+  back.style.transform  = 'none';
   back.style.visibility = 'hidden';
   const bh = back.scrollHeight;
   back.style.position   = '';
   back.style.transform  = '';
   back.style.visibility = '';
+
   const fh = front.scrollHeight;
   flipper.style.height = Math.max(fh, bh) + 'px';
 }
@@ -1388,7 +1408,7 @@ function toggleSettings() {
 
 function adjustSetting(key, delta) {
   if (key === 'sketches') {
-    tempSettings.sketches = Math.max(2, Math.min(16, tempSettings.sketches + delta));
+    tempSettings.sketches = Math.max(1, Math.min(16, tempSettings.sketches + delta));
     document.getElementById('settingSketches').textContent = tempSettings.sketches;
   } else if (key === 'minutes') {
     tempSettings.minutes = Math.max(1, Math.min(10, tempSettings.minutes + delta));
@@ -1415,7 +1435,6 @@ function toggleAbout() {
   const btn     = document.getElementById('aboutBtn');
   const open    = overlay.classList.toggle('show');
   btn.classList.toggle('active', open);
-  document.body.style.overflow = open ? 'hidden' : '';
 }
 function handleAboutBg(e) {
   if (e.target === document.getElementById('aboutOverlay')) toggleAbout();
@@ -1453,7 +1472,12 @@ function buildDots() {
 function buildGrid() {
   const el = document.getElementById('sketchGrid');
   el.innerHTML = '';
-  const n    = settings.sketches;
+  const n = settings.sketches;
+
+  // Hide the grid entirely for a single-sketch session
+  el.style.display = n === 1 ? 'none' : 'grid';
+  if (n === 1) return;
+
   const cols = n <= 4 ? n : Math.min(4, Math.ceil(n / 2));
   el.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   for (let i = 1; i <= n; i++) {
