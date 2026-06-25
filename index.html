@@ -554,7 +554,7 @@
     gap: 8px;
     flex: 1;
     min-height: 0;
-    align-content: stretch;
+    align-content: start;
   }
   .sketch-box {
     border-radius: 10px;
@@ -567,13 +567,13 @@
     transition: all 0.3s;
     position: relative;
     overflow: hidden;
-    min-height: 0;
+    height: var(--card-h, 120px);
   }
   .sketch-box.active-box { border-color: var(--accent); background: var(--accent-soft); }
   .sketch-box.done-box   { border-color: var(--border); background: var(--surface); }
   .sketch-box-num {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(1.4rem, 4.5vh, 3.2rem);
+    font-size: clamp(1.4rem, calc(var(--card-h, 120px) * 0.3), 3.5rem);
     color: #aaa8a4;
     line-height: 1;
     transition: color 0.3s;
@@ -584,11 +584,11 @@
   [data-theme="dark"] .sketch-box.done-box .sketch-box-num { color: #4e4c4e; }
   .sketch-box-check {
     position: absolute;
-    bottom: clamp(8px, 1.5vh, 16px);
+    bottom: clamp(8px, calc(var(--card-h, 120px) * 0.08), 16px);
     left: 0; right: 0;
     display: none;
     justify-content: center;
-    font-size: clamp(0.9rem, 2.5vh, 1.4rem) !important;
+    font-size: clamp(0.9rem, calc(var(--card-h, 120px) * 0.13), 1.5rem) !important;
     color: var(--border);
     line-height: 1;
   }
@@ -1427,6 +1427,7 @@ function applySettings() {
   document.getElementById('cardFlipper').classList.remove('flipped');
   document.getElementById('settingsBtn').classList.remove('active');
   setTimeout(syncCardHeight, 50);
+  setTimeout(layoutSketchGrid, 700); // after the flip animation settles
 }
 
 // ── ABOUT ──────────────────────────────────────────────────────────
@@ -1469,6 +1470,65 @@ function buildDots() {
   }
 }
 
+// ── DYNAMIC GRID LAYOUT ──────────────────────────────────────────────
+// Picks the column count (and resulting card height) that best fills the
+// actual available space below the timer, rather than guessing from
+// window orientation alone. Prefers fewer columns (more rows, squarish
+// cards) and only adds columns when the height genuinely can't fit that
+// many rows at a usable size.
+const GRID_GAP    = 8;
+const CARD_MIN_H  = 64;
+const CARD_MAX_H  = 220;
+
+function computeGridLayout(n, W, H) {
+  const maxCols = Math.min(n, 8);
+  const minCols = Math.min(n, 4);
+  let chosen = null;
+
+  for (let cols = minCols; cols <= maxCols; cols++) {
+    const rows   = Math.ceil(n / cols);
+    const cardW  = (W - (cols - 1) * GRID_GAP) / cols;
+    // Single-row layouts read better a little taller than wide;
+    // multi-row layouts stay roughly square.
+    const aspect = rows === 1 ? 4 / 3 : 1;
+    let cardH    = cardW * aspect;
+    cardH        = Math.min(CARD_MAX_H, Math.max(CARD_MIN_H, cardH));
+    const totalH = rows * cardH + (rows - 1) * GRID_GAP;
+
+    if (totalH <= H) { chosen = { cols, rows, cardH }; break; }
+  }
+
+  // Nothing fit comfortably (very short viewport) — fall back to the
+  // widest layout (fewest rows) at the minimum usable card height.
+  if (!chosen) {
+    const cols = maxCols;
+    const rows = Math.ceil(n / cols);
+    chosen = { cols, rows, cardH: CARD_MIN_H };
+  }
+  return chosen;
+}
+
+function layoutSketchGrid() {
+  if (settings.sketches === 1) return; // grid is hidden, nothing to size
+  const el = document.getElementById('sketchGrid');
+  if (!el || el.style.display === 'none') return;
+
+  const W = el.clientWidth;
+  const H = el.clientHeight;
+  if (W === 0 || H === 0) return;
+
+  const { cols, cardH } = computeGridLayout(settings.sketches, W, H);
+  el.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  el.style.setProperty('--card-h', cardH + 'px');
+}
+
+let layoutResizeTimeout = null;
+window.addEventListener('resize', () => {
+  clearTimeout(layoutResizeTimeout);
+  layoutResizeTimeout = setTimeout(layoutSketchGrid, 80);
+});
+window.addEventListener('orientationchange', () => setTimeout(layoutSketchGrid, 150));
+
 function buildGrid() {
   const el = document.getElementById('sketchGrid');
   el.innerHTML = '';
@@ -1478,8 +1538,6 @@ function buildGrid() {
   el.style.display = n === 1 ? 'none' : 'grid';
   if (n === 1) return;
 
-  const cols = n <= 4 ? n : Math.min(4, Math.ceil(n / 2));
-  el.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
   for (let i = 1; i <= n; i++) {
     const box = document.createElement('div');
     box.id = `sbox-${i}`;
@@ -1487,6 +1545,8 @@ function buildGrid() {
     box.innerHTML = `<div class="sketch-box-num">${i}</div><span class="material-icons-round sketch-box-check">check</span>`;
     el.appendChild(box);
   }
+
+  requestAnimationFrame(layoutSketchGrid);
 }
 
 function updateGrid() {
@@ -1698,6 +1758,24 @@ function exitFullscreen() {
   } else if (document.webkitFullscreenElement) {
     document.webkitExitFullscreen();
   }
+  relayoutAfterFullscreenChange();
+}
+
+// Chrome on Windows (and some other browser/OS combos) animates the
+// browser chrome back in over ~150-300ms after exiting the Fullscreen
+// API, but often only fires a single 'resize' event with transitional,
+// not-yet-settled dimensions. Re-measuring once at the wrong moment
+// locks in an incorrect card-flipper height / sketch-grid card size,
+// which is what causes the "shrunk timer with overlaying cards" bug.
+// Re-running the layout on a staggered schedule guarantees we catch
+// the final, settled dimensions regardless of when 'resize' fires.
+function relayoutAfterFullscreenChange() {
+  const relayout = () => { syncCardHeight(); layoutSketchGrid(); };
+  requestAnimationFrame(relayout);
+  setTimeout(relayout, 50);
+  setTimeout(relayout, 150);
+  setTimeout(relayout, 350);
+  setTimeout(relayout, 600);
 }
 
 // Keep fs overlay in sync whenever display updates
@@ -1749,11 +1827,13 @@ function syncFsStatus(s) {
 document.addEventListener('fullscreenchange', () => {
   if (!document.fullscreenElement && !document.webkitFullscreenElement) {
     document.body.classList.remove('fs-mode');
+    relayoutAfterFullscreenChange();
   }
 });
 document.addEventListener('webkitfullscreenchange', () => {
   if (!document.fullscreenElement && !document.webkitFullscreenElement) {
     document.body.classList.remove('fs-mode');
+    relayoutAfterFullscreenChange();
   }
 });
 
